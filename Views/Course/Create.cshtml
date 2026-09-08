@@ -1,0 +1,32 @@
+@model PathForge.Models.ViewModels.CourseViewModel
+@{
+    ViewData["Title"] = "Create Course";
+}
+
+<div class="pf-page flex justify-center py-12">
+    <div class="pf-form-panel">
+        <div class="pf-form-panel__header">
+            <span class="pf-label">EDUCATOR STUDIO</span>
+            <h2 class="pf-section-header">Create Constellation</h2>
+        </div>
+
+        <form asp-action="Create" method="post">
+            <div class="pf-form-group">
+                <label asp-for="Title" class="pf-form-label">Course Title</label>
+                <input asp-for="Title" class="pf-input" placeholder="e.g. Distributed Systems 101" />
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="Category" class="pf-form-label">Category</label>
+                <input asp-for="Category" class="pf-input" placeholder="e.g. Computer Science" />
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="Description" class="pf-form-label">Description</label>
+                <textarea asp-for="Description" class="pf-input pf-textarea" placeholder="Outline the learning path..."></textarea>
+            </div>
+
+            <button type="submit" class="pf-btn w-full text-center">Save Constellation</button>
+        </form>
+    </div>
+</div>

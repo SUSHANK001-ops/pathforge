@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] — PathForge</title>
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+  @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+
+  @* Render the shared navbar partial *@
+  @await Html.PartialAsync("_Navbar")
+
+  <main>
+    @RenderBody()
+  </main>
+
+  @* Red progress strip at the bottom — the FRAME.md chrome *@
+  <div class="pf-progress-strip" id="readProgress" style="width:0%"></div>
+
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

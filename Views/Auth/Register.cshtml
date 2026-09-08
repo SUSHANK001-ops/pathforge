@@ -1,0 +1,57 @@
+@model PathForge.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="pf-page flex justify-center py-12">
+    <div class="pf-form-panel">
+        <div class="pf-form-panel__header">
+            <span class="pf-label">REGISTRATION</span>
+            <h2 class="pf-section-header">Join PathForge</h2>
+        </div>
+
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="pf-alert pf-alert--error mb-4"></div>
+
+            <div class="pf-form-group">
+                <label asp-for="FullName" class="pf-form-label">Full Name</label>
+                <input asp-for="FullName" class="pf-input" placeholder="Ada Lovelace" />
+                <span asp-validation-for="FullName" class="pf-field-error"></span>
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="Email" class="pf-form-label">Email Address</label>
+                <input asp-for="Email" class="pf-input" placeholder="ada@domain.com" />
+                <span asp-validation-for="Email" class="pf-field-error"></span>
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="Role" class="pf-form-label">Select Account Role</label>
+                <select asp-for="Role" class="pf-input pf-select">
+                    <option value="Student">Student (Learn & Track Progress)</option>
+                    <option value="Educator">Educator (Create & Instruct Courses)</option>
+                </select>
+                <span asp-validation-for="Role" class="pf-field-error"></span>
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="Password" class="pf-form-label">Password</label>
+                <input asp-for="Password" class="pf-input" placeholder="••••••••" />
+                <span asp-validation-for="Password" class="pf-field-error"></span>
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="ConfirmPassword" class="pf-form-label">Confirm Password</label>
+                <input asp-for="ConfirmPassword" class="pf-input" placeholder="••••••••" />
+                <span asp-validation-for="ConfirmPassword" class="pf-field-error"></span>
+            </div>
+
+            <button type="submit" class="pf-btn w-full text-center">Create Account</button>
+
+            <div class="mt-6 pt-4 border-t-[1.5px] border-[var(--dark)] text-center">
+                <span class="pf-bullet-body">Already registered?</span>
+                <a href="/Auth/Login" class="pf-label inline-block ml-2 text-[var(--red)]">Log In</a>
+            </div>
+        </form>
+    </div>
+</div>

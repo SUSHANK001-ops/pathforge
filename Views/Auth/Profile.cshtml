@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "User Profile";
+}
+
+<div class="pf-page py-12">
+    <div class="pf-card--outlined mb-8">
+        <span class="pf-label mb-2">USER PROFILE</span>
+        <h1 class="pf-section-header mb-4">Account Overview</h1>
+        <p class="pf-body mb-6">Manage personal profile details, enrolled learning paths, and account settings.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t-[1.5px] border-[var(--dark)]">
+            <div>
+                <span class="pf-form-label">Full Name</span>
+                <p class="pf-body-cell font-bold">@(Context.Session.GetString("UserName") ?? "Guest User")</p>
+            </div>
+            <div>
+                <span class="pf-form-label">Role</span>
+                <p class="pf-body-cell font-bold">@(Context.Session.GetString("UserRole") ?? "Unauthenticated")</p>
+            </div>
+        </div>
+    </div>
+</div>

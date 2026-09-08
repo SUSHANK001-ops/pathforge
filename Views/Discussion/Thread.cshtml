@@ -1,0 +1,24 @@
+@{
+    ViewData["Title"] = "Discussion Thread";
+}
+
+<div class="pf-page py-12">
+    <div class="pf-card--outlined mb-8">
+        <span class="pf-label">THREAD #104</span>
+        <h1 class="pf-card-title my-2">How to handle complex relationships with DeleteBehavior.Restrict?</h1>
+        <p class="pf-body my-4">
+            When configuring foreign keys for entities with multiple references to User, such as ChatMessage or DiscussionPost, SQL Server triggers circular cascade errors. Restrict behavior resolves this cleanly.
+        </p>
+        <span class="pf-course-card__meta">Posted by Alex Rivera &middot; 2 hours ago</span>
+    </div>
+
+    <div class="pf-form-panel max-w-full">
+        <h3 class="pf-card-title mb-4">Post a Reply</h3>
+        <form method="post">
+            <div class="pf-form-group">
+                <textarea class="pf-input pf-textarea" placeholder="Share your insight..."></textarea>
+            </div>
+            <button type="submit" class="pf-btn">Submit Reply</button>
+        </form>
+    </div>
+</div>

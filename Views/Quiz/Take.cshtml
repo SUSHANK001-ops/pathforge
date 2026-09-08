@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "Take Quiz";
+}
+
+<div class="pf-page py-12">
+    <div class="pf-card--outlined mb-8">
+        <span class="pf-label">TIMED ASSESSMENT</span>
+        <h1 class="pf-card-title my-2">C# & MVC Architecture</h1>
+        <p class="pf-body-cell">Answer all questions before the timer elapses.</p>
+    </div>
+
+    <form asp-action="Result" method="post" class="space-y-6">
+        <div class="pf-card--outlined">
+            <span class="pf-label">QUESTION 1 OF 5</span>
+            <p class="pf-body my-3">Which method is called first in the ASP.NET Core request pipeline?</p>
+            
+            <div class="space-y-2 mt-4">
+                <label class="flex items-center gap-3">
+                    <input type="radio" name="q1" value="1" class="accent-[var(--red)]" />
+                    <span class="pf-bullet-body">Middleware configured in Program.cs</span>
+                </label>
+                <label class="flex items-center gap-3">
+                    <input type="radio" name="q1" value="2" class="accent-[var(--red)]" />
+                    <span class="pf-bullet-body">Controller Action Invoker</span>
+                </label>
+            </div>
+        </div>
+
+        <button type="submit" class="pf-btn">Submit Exam</button>
+    </form>
+</div>

@@ -1,0 +1,731 @@
+/* ============================================================
+   PATHFORGE DESIGN SYSTEM & TAILWIND CSS V4
+   Translated from FRAME.md — Bold Poster editorial style
+   Four colors only. Square corners. Red is the lone accent.
+   ============================================================ */
+
+/* --- Google Fonts Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Shrikhand&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@400;600;700&display=swap');
+
+@import "tailwindcss";
+
+/* --- Tailwind CSS v4 Theme Configuration --- */
+@theme {
+  --color-pf-bg: #FFFFFF;
+  --color-pf-dark: #1C1410;
+  --color-pf-red: #D8000F;
+  --color-pf-light: #F5F2EF;
+
+  --font-display: 'Shrikhand', serif;
+  --font-body: 'Libre Baskerville', Georgia, serif;
+  --font-chrome: 'Space Grotesk', sans-serif;
+}
+
+/* --- Core Custom Tokens --- */
+:root {
+  --bg:    #FFFFFF;
+  --dark:  #1C1410;
+  --red:   #D8000F;
+  --light: #F5F2EF;
+
+  /* Typography scale (web-adapted from cqw → rem/clamp) */
+  --font-display:  'Shrikhand', serif;
+  --font-body:     'Libre Baskerville', Georgia, serif;
+  --font-chrome:   'Space Grotesk', sans-serif;
+
+  --text-body:          1rem;        /* Baskerville body */
+  --text-body-cell:     0.875rem;
+  --text-label:         0.625rem;    /* Space Grotesk label — 10px, tracked, uppercase */
+  --text-bullet-body:   0.875rem;
+  --text-card-title:    1.5rem;      /* Shrikhand card title */
+  --text-cell-number:   2rem;        /* Shrikhand cell number in red */
+  --text-section-header:2.25rem;     /* Shrikhand section header */
+  --text-hero:          clamp(2.5rem, 6vw, 5rem);
+  --text-hero-red:      clamp(3rem, 7vw, 6rem);
+  --text-stat-big:      clamp(4rem, 12vw, 9rem);
+
+  /* Spacing */
+  --pad-page:  3rem 4rem;
+  --pad-card:  0 0 0 1.25rem;       /* red leftbar card padding */
+  --gap-grid:  1.5rem 2rem;
+
+  /* Borders */
+  --border-outer: 3px solid var(--dark);
+  --border-inner: 1.5px solid var(--dark);
+  --border-leftbar: 4px solid var(--red);
+
+  /* Stacked text shadow (ONLY shadow in the system — text-shadow only) */
+  --shadow-stacked:
+    2px 2px 0 rgba(28, 20, 16, 0.25),
+    4px 4px 0 rgba(28, 20, 16, 0.20),
+    6px 6px 0 rgba(28, 20, 16, 0.15);
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.75;
+  color: var(--dark);
+  background-color: var(--bg);
+  /* NO box-shadow, NO rounded corners, NO gradients */
+}
+
+img { max-width: 100%; display: block; }
+a { color: var(--red); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+
+/* ============================================================
+   TYPOGRAPHY COMPONENTS
+   ============================================================ */
+
+/* Shrikhand Display — hero, section headers, card titles, numbers */
+.pf-hero-title {
+  font-family: var(--font-display);
+  font-size: var(--text-hero);
+  font-weight: 400;
+  line-height: 0.88;
+  color: var(--dark);
+}
+
+.pf-hero-title-red {
+  font-family: var(--font-display);
+  font-size: var(--text-hero-red);
+  font-weight: 400;
+  line-height: 0.85;
+  color: var(--red);
+  transform: rotate(-4deg);
+  display: inline-block;
+}
+
+.pf-section-header {
+  font-family: var(--font-display);
+  font-size: var(--text-section-header);
+  font-weight: 400;
+  line-height: 1.0;
+  color: var(--dark);
+}
+
+.pf-card-title {
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--dark);
+}
+
+.pf-stat-big {
+  font-family: var(--font-display);
+  font-size: var(--text-stat-big);
+  font-weight: 400;
+  line-height: 0.82;
+  color: var(--red);
+  transform: rotate(-6deg);
+  display: inline-block;
+}
+
+.pf-cell-number {
+  font-family: var(--font-display);
+  font-size: var(--text-cell-number);
+  font-weight: 400;
+  color: var(--red);
+  line-height: 1.0;
+}
+
+/* Libre Baskerville — all body text */
+.pf-body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: 1.75;
+  color: var(--dark);
+  max-width: 65ch;
+}
+
+.pf-body-cell {
+  font-family: var(--font-body);
+  font-size: var(--text-body-cell);
+  line-height: 1.55;
+}
+
+/* Space Grotesk — labels, eyebrows, bullets, chrome only */
+.pf-label {
+  font-family: var(--font-chrome);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red);
+  display: block;
+}
+
+.pf-bullet-body {
+  font-family: var(--font-chrome);
+  font-size: var(--text-bullet-body);
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+
+.pf-page {
+  padding: var(--pad-page);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pf-page--full {
+  padding: var(--pad-page);
+  width: 100%;
+}
+
+/* Off-white alternating section */
+.pf-section-light {
+  background-color: var(--light);
+  padding: 3rem 4rem;
+}
+
+.pf-section-dark {
+  background-color: var(--dark);
+  color: var(--bg);
+  padding: 3rem 4rem;
+}
+
+.pf-section-red {
+  background-color: var(--red);
+  color: var(--bg);
+  padding: 3rem 4rem;
+}
+
+
+/* ============================================================
+   NAVIGATION BAR
+   ============================================================ */
+
+.pf-navbar {
+  background-color: var(--dark);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  height: 60px;
+  border-bottom: 3px solid var(--red);  /* red bottom border — the accent */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Logo */
+.pf-navbar__brand {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--bg);
+  text-decoration: none;
+  letter-spacing: 0;
+}
+
+.pf-navbar__brand span {
+  color: var(--red);  /* "PF" mark in red */
+}
+
+/* Nav links */
+.pf-navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+
+.pf-navbar__links a {
+  font-family: var(--font-chrome);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--light);
+  text-decoration: none;
+  padding: 0.25rem 0;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.pf-navbar__links a:hover,
+.pf-navbar__links a.active {
+  color: var(--bg);
+  border-bottom-color: var(--red);
+  text-decoration: none;
+}
+
+/* Role badge in navbar */
+.pf-navbar__role {
+  font-family: var(--font-chrome);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--light);
+  opacity: 0.6;
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+/* Primary — red fill, Space Grotesk, NO rounded corners */
+.pf-btn {
+  display: inline-block;
+  font-family: var(--font-chrome);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--bg);
+  background-color: var(--red);
+  border: 2px solid var(--red);
+  border-radius: 0;              /* ← FRAME.md: square corners always */
+  padding: 0.6rem 1.4rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.pf-btn:hover {
+  background-color: var(--dark);
+  border-color: var(--dark);
+  color: var(--bg);
+  text-decoration: none;
+}
+
+/* Ghost button — outline only */
+.pf-btn--ghost {
+  background-color: transparent;
+  color: var(--dark);
+  border-color: var(--dark);
+}
+
+.pf-btn--ghost:hover {
+  background-color: var(--dark);
+  color: var(--bg);
+}
+
+/* Small variant */
+.pf-btn--sm {
+  font-size: 0.65rem;
+  padding: 0.35rem 0.85rem;
+  letter-spacing: 1px;
+}
+
+/* Danger — same structure, just darker red awareness */
+.pf-btn--danger {
+  background-color: var(--dark);
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.pf-btn--danger:hover {
+  background-color: var(--red);
+  color: var(--bg);
+}
+
+
+/* ============================================================
+   FORMS & INPUTS
+   ============================================================ */
+
+.pf-form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Form label — Space Grotesk uppercase in red */
+.pf-form-label {
+  display: block;
+  font-family: var(--font-chrome);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 0.4rem;
+}
+
+/* Input field — dark border, square corners, Baskerville text */
+.pf-input {
+  display: block;
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--dark);
+  background-color: var(--bg);
+  border: 2px solid var(--dark);
+  border-radius: 0;              /* ← FRAME.md: square only */
+  padding: 0.6rem 0.75rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.pf-input:focus {
+  border-color: var(--red);      /* red focus ring — accent rule */
+}
+
+.pf-input::placeholder {
+  color: var(--dark);
+  opacity: 0.35;
+  font-style: italic;
+}
+
+.pf-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%231C1410' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
+}
+
+/* Textarea */
+.pf-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Validation error text */
+.pf-field-error {
+  font-family: var(--font-chrome);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-top: 0.3rem;
+  display: block;
+}
+
+/* Form container — bordered panel */
+.pf-form-panel {
+  border: var(--border-outer);
+  padding: 2rem 2.5rem;
+  background-color: var(--bg);
+  max-width: 480px;
+  width: 100%;
+}
+
+.pf-form-panel__header {
+  border-bottom: var(--border-inner);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+
+/* ============================================================
+   CARDS — RED LEFTBAR (editorial card cantilevered off red rule)
+   ============================================================ */
+
+.pf-card {
+  border-left: var(--border-leftbar);   /* 4px solid red — the signature */
+  padding: var(--pad-card);
+  background-color: var(--bg);
+  border-radius: 0;                      /* FRAME.md: no rounded corners */
+  /* NO box-shadow */
+}
+
+.pf-card--outlined {
+  border: var(--border-outer);
+  border-left: var(--border-leftbar);
+  padding: 1.25rem 1.5rem 1.25rem 1.25rem;
+}
+
+.pf-card--light {
+  background-color: var(--light);
+}
+
+/* Course card */
+.pf-course-card {
+  border: var(--border-outer);
+  border-left: var(--border-leftbar);
+  padding: 1.25rem 1.5rem 1.25rem 1.25rem;
+  background-color: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pf-course-card__category {
+  font-family: var(--font-chrome);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+.pf-course-card__title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--dark);
+  line-height: 1.15;
+}
+
+.pf-course-card__meta {
+  font-family: var(--font-chrome);
+  font-size: 0.7rem;
+  color: var(--dark);
+  opacity: 0.65;
+}
+
+.pf-course-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: var(--border-inner);
+}
+
+/* Status pill — the ONLY 4px border-radius in the system */
+.pf-status {
+  display: inline-block;
+  font-family: var(--font-chrome);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;             /* FRAME.md: hint pill exception */
+  border: 1px solid currentColor;
+}
+
+.pf-status--live    { color: var(--red); border-color: var(--red); }
+.pf-status--draft   { color: var(--dark); opacity: 0.5; }
+.pf-status--archived{ color: var(--dark); opacity: 0.4; }
+
+
+/* ============================================================
+   DATA TABLE — DOUBLE BORDER GRID (fin-grid signature)
+   ============================================================ */
+
+.pf-table-wrap {
+  border: var(--border-outer);   /* 3px outer border */
+  overflow-x: auto;
+}
+
+.pf-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--bg);
+}
+
+.pf-table thead {
+  background-color: var(--dark);
+  color: var(--bg);
+}
+
+.pf-table thead th {
+  font-family: var(--font-chrome);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-right: 1.5px solid rgba(245, 242, 239, 0.2);  /* inner border on dark bg */
+}
+
+.pf-table thead th:last-child { border-right: none; }
+
+.pf-table tbody tr {
+  border-bottom: var(--border-inner);  /* 1.5px inner horizontal rule */
+}
+
+.pf-table tbody tr:nth-child(even) {
+  background-color: var(--light);      /* alternating light stripe */
+}
+
+.pf-table tbody tr:hover {
+  background-color: #ede9e5;
+}
+
+.pf-table tbody td {
+  font-family: var(--font-body);
+  font-size: var(--text-body-cell);
+  padding: 0.7rem 1rem;
+  color: var(--dark);
+  border-right: var(--border-inner);   /* 1.5px inner vertical rule */
+}
+
+.pf-table tbody td:last-child { border-right: none; }
+
+/* Number cell — red Shrikhand */
+.pf-table .cell-number {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--red);
+  font-weight: 400;
+}
+
+
+/* ============================================================
+   PROGRESS BAR — red bottom strip (most prominent chrome)
+   ============================================================ */
+
+.pf-progress {
+  width: 100%;
+  height: 8px;
+  background-color: var(--light);
+  border: 1px solid var(--dark);
+  border-radius: 0;
+}
+
+.pf-progress__fill {
+  height: 100%;
+  background-color: var(--red);
+  border-radius: 0;
+  transition: width 0.3s ease;
+}
+
+/* Page-bottom strip version */
+.pf-progress-strip {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background-color: var(--red);
+  z-index: 999;
+  transition: width 0.3s ease;
+}
+
+
+/* ============================================================
+   STAT PANELS — for homepage and admin dashboard
+   ============================================================ */
+
+.pf-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0;
+  border: var(--border-outer);
+}
+
+.pf-stat-cell {
+  padding: 1.5rem;
+  border-right: var(--border-inner);
+  border-bottom: var(--border-inner);
+}
+
+.pf-stat-cell:last-child { border-right: none; }
+
+.pf-stat-cell__number {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: var(--red);
+  line-height: 1.0;
+  display: block;
+}
+
+.pf-stat-cell__label {
+  font-family: var(--font-chrome);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dark);
+  opacity: 0.6;
+  display: block;
+  margin-top: 0.35rem;
+}
+
+
+/* ============================================================
+   ALERTS & MESSAGES
+   ============================================================ */
+
+.pf-alert {
+  font-family: var(--font-chrome);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0.7rem 1rem;
+  border-left: 4px solid var(--red);
+  background-color: var(--light);
+  color: var(--dark);
+  border-radius: 0;
+}
+
+.pf-alert--success {
+  border-left-color: var(--dark);
+}
+
+.pf-alert--error {
+  border-left-color: var(--red);
+  background-color: #fff0f0;
+}
+
+
+/* ============================================================
+   BULLET LIST (red em-dash, max 3 bullets per FRAME.md)
+   ============================================================ */
+
+.pf-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.pf-bullets li {
+  font-family: var(--font-chrome);
+  font-size: var(--text-bullet-body);
+  font-weight: 400;
+  line-height: 1.45;
+  padding-left: 1.5rem;
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.pf-bullets li::before {
+  content: "—";                  /* red em-dash bullet */
+  color: var(--red);
+  font-weight: 700;
+  position: absolute;
+  left: 0;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 768px) {
+  .pf-page { padding: 1.5rem; }
+  .pf-section-light,
+  .pf-section-dark,
+  .pf-section-red { padding: 2rem 1.5rem; }
+
+  .pf-navbar { padding: 0 1.25rem; }
+  .pf-navbar__links { gap: 1rem; }
+  .pf-navbar__links a { font-size: 0.6rem; }
+
+  :root {
+    --text-hero:     clamp(2rem, 10vw, 3rem);
+    --text-hero-red: clamp(2.5rem, 12vw, 3.5rem);
+    --text-stat-big: clamp(3rem, 18vw, 5rem);
+  }
+
+  .pf-stat-grid { grid-template-columns: 1fr 1fr; }
+  .pf-form-panel { max-width: 100%; padding: 1.25rem; }
+}

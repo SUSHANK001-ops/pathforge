@@ -1,0 +1,37 @@
+@{
+  var role     = Context.Session.GetString("UserRole") ?? "";
+  var name     = Context.Session.GetString("UserName") ?? "";
+  var isLogged = !string.IsNullOrEmpty(role);
+}
+
+<nav class="pf-navbar">
+  <a href="/" class="pf-navbar__brand">
+    <span>PF</span> PathForge
+  </a>
+
+  <ul class="pf-navbar__links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/Course">Courses</a></li>
+
+    @if (!isLogged)
+    {
+      <li><a href="/Auth/Login">Log In</a></li>
+      <li><a href="/Auth/Register" class="pf-btn pf-btn--sm">Register</a></li>
+    }
+    else
+    {
+      @if (role == "Educator" || role == "Admin")
+      {
+        <li><a href="/Course/Manage">Manage Courses</a></li>
+      }
+      @if (role == "Admin")
+      {
+        <li><a href="/Admin">Admin</a></li>
+      }
+      <li>
+        <span class="pf-navbar__role">@name · @role</span>
+      </li>
+      <li><a href="/Auth/Logout">Log Out</a></li>
+    }
+  </ul>
+</nav>

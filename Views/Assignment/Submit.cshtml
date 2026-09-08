@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Submit Assignment";
+}
+
+<div class="pf-page flex justify-center py-12">
+    <div class="pf-form-panel">
+        <div class="pf-form-panel__header">
+            <span class="pf-label">STUDENT SUBMISSION</span>
+            <h2 class="pf-section-header">Submit Work</h2>
+        </div>
+
+        <form asp-action="Submit" method="post" enctype="multipart/form-data">
+            <div class="pf-form-group">
+                <label class="pf-form-label">Upload Deliverable (PDF, ZIP, Code)</label>
+                <input type="file" name="submissionFile" class="pf-input" />
+            </div>
+
+            <div class="pf-form-group">
+                <label class="pf-form-label">Student Comments / Notes</label>
+                <textarea name="comment" class="pf-input pf-textarea" placeholder="Provide notes or repo links..."></textarea>
+            </div>
+
+            <button type="submit" class="pf-btn w-full text-center">Confirm Submission</button>
+        </form>
+    </div>
+</div>

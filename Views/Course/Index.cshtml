@@ -1,0 +1,46 @@
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<div class="pf-page py-12">
+    <div class="flex flex-wrap justify-between items-end mb-8 border-b-[3px] border-[var(--dark)] pb-4">
+        <div>
+            <span class="pf-label mb-2">EXPLORE LEARNING PATHS</span>
+            <h1 class="pf-section-header">All Constellations</h1>
+        </div>
+        <div>
+            <a href="/Course/Create" class="pf-btn pf-btn--sm">+ Create Course</a>
+        </div>
+    </div>
+
+    <!-- Courses Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="pf-course-card">
+            <span class="pf-course-card__category">Computer Science</span>
+            <h3 class="pf-course-card__title">ASP.NET Core Architecture</h3>
+            <p class="pf-body-cell">
+                Full lifecycle web applications, session pipelines, and enterprise software engineering.
+            </p>
+            <div class="pf-course-card__meta">
+                <span>12 Modules &middot; 4 Assignments</span>
+            </div>
+            <div class="pf-course-card__actions">
+                <a href="/Course/Details/1" class="pf-btn pf-btn--sm">View Course</a>
+            </div>
+        </div>
+
+        <div class="pf-course-card">
+            <span class="pf-course-card__category">Database Systems</span>
+            <h3 class="pf-course-card__title">EF Core & Relational Design</h3>
+            <p class="pf-body-cell">
+                Data modeling, foreign key cascade constraints, schema migrations, and high-performance querying.
+            </p>
+            <div class="pf-course-card__meta">
+                <span>8 Modules &middot; 2 Quizzes</span>
+            </div>
+            <div class="pf-course-card__actions">
+                <a href="/Course/Details/2" class="pf-btn pf-btn--sm">View Course</a>
+            </div>
+        </div>
+    </div>
+</div>

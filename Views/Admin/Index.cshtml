@@ -1,0 +1,31 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="pf-page py-12">
+    <div class="mb-8 border-b-[3px] border-[var(--dark)] pb-4">
+        <span class="pf-label mb-2">MANAGEMENT CONSOLE</span>
+        <h1 class="pf-section-header">Admin Control Panel</h1>
+    </div>
+
+    <!-- Admin Metric Grid -->
+    <div class="pf-stat-grid mb-8">
+        <div class="pf-stat-cell">
+            <span class="pf-stat-cell__number">248</span>
+            <span class="pf-stat-cell__label">Total Enrolled Students</span>
+        </div>
+        <div class="pf-stat-cell">
+            <span class="pf-stat-cell__number">18</span>
+            <span class="pf-stat-cell__label">Active Courses</span>
+        </div>
+        <div class="pf-stat-cell">
+            <span class="pf-stat-cell__number">94%</span>
+            <span class="pf-stat-cell__label">Platform Completion Rate</span>
+        </div>
+    </div>
+
+    <div class="flex gap-4">
+        <a href="/Admin/Users" class="pf-btn">Manage Users</a>
+        <a href="/Admin/Courses" class="pf-btn pf-btn--ghost">Review Courses</a>
+    </div>
+</div>

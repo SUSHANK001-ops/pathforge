@@ -1,0 +1,34 @@
+@model PathForge.Models.ViewModels.CourseViewModel
+@{
+    ViewData["Title"] = "Edit Course";
+}
+
+<div class="pf-page flex justify-center py-12">
+    <div class="pf-form-panel">
+        <div class="pf-form-panel__header">
+            <span class="pf-label">EDUCATOR STUDIO</span>
+            <h2 class="pf-section-header">Edit Course</h2>
+        </div>
+
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="pf-form-group">
+                <label asp-for="Title" class="pf-form-label">Course Title</label>
+                <input asp-for="Title" class="pf-input" />
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="Category" class="pf-form-label">Category</label>
+                <input asp-for="Category" class="pf-input" />
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="Description" class="pf-form-label">Description</label>
+                <textarea asp-for="Description" class="pf-input pf-textarea"></textarea>
+            </div>
+
+            <button type="submit" class="pf-btn w-full text-center">Update Course</button>
+        </form>
+    </div>
+</div>

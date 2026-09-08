@@ -1,0 +1,37 @@
+@model PathForge.Models.ViewModels.AssignmentViewModel
+@{
+    ViewData["Title"] = "Create Assignment";
+}
+
+<div class="pf-page flex justify-center py-12">
+    <div class="pf-form-panel">
+        <div class="pf-form-panel__header">
+            <span class="pf-label">EDUCATOR STUDIO</span>
+            <h2 class="pf-section-header">New Assignment</h2>
+        </div>
+
+        <form asp-action="Create" method="post">
+            <div class="pf-form-group">
+                <label asp-for="Title" class="pf-form-label">Assignment Title</label>
+                <input asp-for="Title" class="pf-input" />
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="DueDate" class="pf-form-label">Due Date</label>
+                <input asp-for="DueDate" type="date" class="pf-input" />
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="MaxMarks" class="pf-form-label">Maximum Marks</label>
+                <input asp-for="MaxMarks" type="number" class="pf-input" />
+            </div>
+
+            <div class="pf-form-group">
+                <label asp-for="Description" class="pf-form-label">Instructions</label>
+                <textarea asp-for="Description" class="pf-input pf-textarea"></textarea>
+            </div>
+
+            <button type="submit" class="pf-btn w-full text-center">Create Assignment</button>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "My Progress";
+}
+
+<div class="pf-page py-12">
+    <div class="mb-8 border-b-[3px] border-[var(--dark)] pb-4">
+        <span class="pf-label mb-2">STUDENT PATHWAY</span>
+        <h1 class="pf-section-header">Learning Progress</h1>
+    </div>
+
+    <div class="pf-card--outlined mb-8">
+        <span class="pf-label">CURRENT CONSTELLATION</span>
+        <h3 class="pf-card-title my-2">ASP.NET Core Architecture</h3>
+        
+        <div class="my-4">
+            <div class="flex justify-between text-xs font-semibold mb-1">
+                <span>COMPLETION STATUS</span>
+                <span>65%</span>
+            </div>
+            <div class="pf-progress">
+                <div class="pf-progress__fill" style="width: 65%;"></div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div class="pf-card pf-card--light p-4">
+                <span class="pf-label">MODULE 1</span>
+                <p class="pf-body-cell font-bold">Introduction & Setup</p>
+                <span class="pf-status pf-status--live mt-2">Completed</span>
+            </div>
+            <div class="pf-card pf-card--light p-4">
+                <span class="pf-label">MODULE 2</span>
+                <p class="pf-body-cell font-bold">Controllers & Routing</p>
+                <span class="pf-status pf-status--live mt-2">Completed</span>
+            </div>
+            <div class="pf-card pf-card--light p-4">
+                <span class="pf-label">MODULE 3</span>
+                <p class="pf-body-cell font-bold">EF Core Schemas</p>
+                <span class="pf-status pf-status--draft mt-2">In Progress</span>
+            </div>
+        </div>
+    </div>
+</div>

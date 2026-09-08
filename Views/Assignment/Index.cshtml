@@ -1,0 +1,38 @@
+@{
+    ViewData["Title"] = "Assignments";
+}
+
+<div class="pf-page py-12">
+    <div class="flex justify-between items-end mb-8 border-b-[3px] border-[var(--dark)] pb-4">
+        <div>
+            <span class="pf-label mb-2">COURSE DELIVERABLES</span>
+            <h1 class="pf-section-header">Assignments</h1>
+        </div>
+        <div>
+            <a href="/Assignment/Create" class="pf-btn pf-btn--sm">+ New Assignment</a>
+        </div>
+    </div>
+
+    <div class="pf-table-wrap">
+        <table class="pf-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Due Date</th>
+                    <th>Max Marks</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Database Migration Script</td>
+                    <td>Oct 15, 2026</td>
+                    <td class="cell-number">100</td>
+                    <td><span class="pf-status pf-status--live">Open</span></td>
+                    <td><a href="/Assignment/Submit/1" class="pf-btn pf-btn--sm">Submit</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
