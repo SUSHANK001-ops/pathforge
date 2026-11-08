@@ -1,26 +1,64 @@
+@model PathForge.Models.Entities.Assignment
 @{
-    ViewData["Title"] = "Submit Assignment";
+    ViewData["Title"] = "Submit — " + Model.Title;
+    Layout = "_Layout";
+    var existing = ViewBag.Existing as PathForge.Models.Entities.AssignmentSubmission;
 }
 
-<div class="pf-page flex justify-center py-12">
-    <div class="pf-form-panel">
-        <div class="pf-form-panel__header">
-            <span class="pf-label">STUDENT SUBMISSION</span>
-            <h2 class="pf-section-header">Submit Work</h2>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+  <span class="pf-label">@Model.Course.Title</span>
+  <h1 class="pf-section-header" style="margin-top:0.4rem;">@Model.Title</h1>
+
+  @if (TempData["Error"] != null)
+  {
+    <div class="pf-alert pf-alert--error" style="margin-top:1.5rem; max-width:600px;">@TempData["Error"]</div>
+  }
+
+  <div class="pf-card pf-card--outlined" style="max-width:600px; margin-top:2rem; padding:1.5rem;">
+    <div style="margin-bottom:1rem;">
+      <p class="pf-body">@Model.Description</p>
+      <p class="pf-body" style="margin-top:0.5rem; font-size:0.8rem; opacity:0.6;">
+        Due: @Model.DueDate.ToString("dd MMM yyyy, HH:mm")
+        &nbsp;·&nbsp; Max marks: @Model.MaxMarks
+      </p>
+    </div>
+
+    @if (existing != null)
+    {
+      <div class="pf-alert pf-alert--success" style="margin-bottom:1rem;">
+        Already submitted on @existing.SubmittedAt.ToString("dd MMM yyyy") —
+        Status: <strong>@existing.Status</strong>
+        @if (existing.MarksAwarded.HasValue)
+        {
+          <span> — Marks: <strong>@existing.MarksAwarded / @Model.MaxMarks</strong></span>
+        }
+      </div>
+      @if (!string.IsNullOrEmpty(existing.GraderFeedback))
+      {
+        <p class="pf-body" style="font-size:0.85rem; border-left:var(--border-leftbar); padding-left:1rem;">
+          Feedback: @existing.GraderFeedback
+        </p>
+      }
+    }
+    else
+    {
+      <form asp-action="Submit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="assignmentId" value="@Model.Id" />
+
+        <div class="pf-form-group">
+          <label class="pf-form-label">Upload File (optional)</label>
+          <input type="file" name="file" class="pf-input" />
         </div>
 
-        <form asp-action="Submit" method="post" enctype="multipart/form-data">
-            <div class="pf-form-group">
-                <label class="pf-form-label">Upload Deliverable (PDF, ZIP, Code)</label>
-                <input type="file" name="submissionFile" class="pf-input" />
-            </div>
+        <div class="pf-form-group">
+          <label class="pf-form-label">Comment</label>
+          <textarea name="comment" class="pf-input pf-textarea" rows="3"
+                    placeholder="Add notes about your submission..."></textarea>
+        </div>
 
-            <div class="pf-form-group">
-                <label class="pf-form-label">Student Comments / Notes</label>
-                <textarea name="comment" class="pf-input pf-textarea" placeholder="Provide notes or repo links..."></textarea>
-            </div>
-
-            <button type="submit" class="pf-btn w-full text-center">Confirm Submission</button>
-        </form>
-    </div>
+        <button type="submit" class="pf-btn">Submit Assignment</button>
+      </form>
+    }
+  </div>
 </div>

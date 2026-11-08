@@ -1,38 +1,96 @@
+@model IEnumerable<PathForge.Models.Entities.Assignment>
 @{
     ViewData["Title"] = "Assignments";
+    Layout = "_Layout";
+    var course   = ViewBag.Course as PathForge.Models.Entities.Course;
+    int userId   = (int)(ViewBag.UserId ?? 0);
+    string role  = ViewBag.UserRole ?? "";
+    bool isStaff = role == "Educator" || role == "Admin";
 }
 
-<div class="pf-page py-12">
-    <div class="flex justify-between items-end mb-8 border-b-[3px] border-[var(--dark)] pb-4">
-        <div>
-            <span class="pf-label mb-2">COURSE DELIVERABLES</span>
-            <h1 class="pf-section-header">Assignments</h1>
-        </div>
-        <div>
-            <a href="/Assignment/Create" class="pf-btn pf-btn--sm">+ New Assignment</a>
-        </div>
-    </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
 
-    <div class="pf-table-wrap">
-        <table class="pf-table">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Due Date</th>
-                    <th>Max Marks</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Database Migration Script</td>
-                    <td>Oct 15, 2026</td>
-                    <td class="cell-number">100</td>
-                    <td><span class="pf-status pf-status--live">Open</span></td>
-                    <td><a href="/Assignment/Submit/1" class="pf-btn pf-btn--sm">Submit</a></td>
-                </tr>
-            </tbody>
-        </table>
+  <div style="display:flex; justify-content:space-between; align-items:flex-start;
+              border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;
+              flex-wrap:wrap; gap:1rem;">
+    <div>
+      <span class="pf-label">@course?.Title</span>
+      <h1 class="pf-section-header" style="margin-top:0.4rem;">Assignments</h1>
     </div>
+    @if (isStaff)
+    {
+      <a asp-action="Create" asp-route-courseId="@course?.Id" class="pf-btn">+ New Assignment</a>
+    }
+  </div>
+
+  @if (TempData["Success"] != null)
+  {
+    <div class="pf-alert pf-alert--success" style="margin-bottom:1.5rem;">@TempData["Success"]</div>
+  }
+
+  @if (!Model.Any())
+  {
+    <div class="pf-alert">No assignments yet.</div>
+  }
+  else
+  {
+    @foreach (var a in Model)
+    {
+      <div class="pf-card pf-card--outlined" style="margin-bottom:1rem;">
+        <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h3 class="pf-card-title" style="font-size:1.1rem;">@a.Title</h3>
+            <p class="pf-body-cell" style="opacity:0.7; margin-top:0.25rem;">@a.Description</p>
+            <p class="pf-body-cell" style="opacity:0.6; margin-top:0.35rem;">
+              Due @a.DueDate.ToString("dd MMM yyyy, HH:mm") &nbsp;·&nbsp; Max @a.MaxMarks marks
+            </p>
+          </div>
+          <div style="flex-shrink:0;">
+            @if (role == "Student")
+            {
+              @{ var mine = a.Submissions.FirstOrDefault(s => s.StudentId == userId); }
+              @if (mine == null)
+              {
+                <a asp-action="Submit" asp-route-id="@a.Id" class="pf-btn pf-btn--sm">Submit</a>
+              }
+              else
+              {
+                <span class="pf-status pf-status--live">@mine.Status</span>
+              }
+            }
+          </div>
+        </div>
+
+        @* Educator view — list submissions to grade *@
+        @if (isStaff && a.Submissions.Any())
+        {
+          <div style="border-top:var(--border-inner); margin-top:1rem; padding-top:0.75rem;">
+            <span class="pf-label" style="margin-bottom:0.5rem;">Submissions (@a.Submissions.Count)</span>
+            @foreach (var s in a.Submissions)
+            {
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:0.3rem 0;">
+                <span class="pf-body-cell">
+                  @s.Student?.FullName &nbsp;·&nbsp;
+                  <span class="pf-status pf-status--@(s.Status == "Graded" ? "live" : "draft")">@s.Status</span>
+                  @if (s.MarksAwarded.HasValue) { <text> — @s.MarksAwarded/@a.MaxMarks</text> }
+                </span>
+                <span style="display:flex; gap:0.5rem;">
+                  @if (!string.IsNullOrEmpty(s.FileUrl))
+                  {
+                    <a href="@s.FileUrl" target="_blank" class="pf-btn pf-btn--ghost pf-btn--sm">File</a>
+                  }
+                  <a asp-action="Grade" asp-route-submissionId="@s.Id" class="pf-btn pf-btn--sm">Grade</a>
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <a asp-controller="Course" asp-action="Details" asp-route-id="@course?.Id"
+     class="pf-label" style="text-decoration:none; display:inline-block; margin-top:1rem;">
+    ← Back to Course
+  </a>
 </div>

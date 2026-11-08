@@ -1,0 +1,62 @@
+@model PathForge.Models.Entities.AssignmentSubmission
+@{
+    ViewData["Title"] = "Grade Submission";
+    Layout = "_Layout";
+}
+
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+  <span class="pf-label">@Model.Assignment.Title</span>
+  <h1 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
+    Grade Submission
+  </h1>
+
+  <div class="pf-card pf-card--outlined" style="max-width:640px; padding:1.5rem;">
+
+    <p class="pf-body" style="margin-bottom:0.5rem;">
+      <strong>Student:</strong> @Model.Student?.FullName
+    </p>
+    <p class="pf-body-cell" style="opacity:0.65;">
+      Submitted @Model.SubmittedAt.ToString("dd MMM yyyy, HH:mm") &nbsp;·&nbsp;
+      <span class="pf-status pf-status--draft">@Model.Status</span>
+    </p>
+
+    @if (!string.IsNullOrEmpty(Model.FileUrl))
+    {
+      <p style="margin-top:0.75rem;">
+        <a href="@Model.FileUrl" target="_blank" class="pf-btn pf-btn--ghost pf-btn--sm">Download File</a>
+      </p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Comment))
+    {
+      <p class="pf-body" style="margin-top:0.75rem; font-size:0.9rem;
+         border-left:var(--border-leftbar); padding-left:1rem;">
+        @Model.Comment
+      </p>
+    }
+
+    <form asp-action="Grade" method="post" style="margin-top:1.5rem;
+          border-top:var(--border-inner); padding-top:1.5rem;">
+      @Html.AntiForgeryToken()
+      <input type="hidden" name="submissionId" value="@Model.Id" />
+
+      <div class="pf-form-group">
+        <label class="pf-form-label">Marks (out of @Model.Assignment.MaxMarks)</label>
+        <input type="number" name="marks" class="pf-input" min="0"
+               max="@Model.Assignment.MaxMarks"
+               value="@(Model.MarksAwarded ?? 0)" required />
+      </div>
+
+      <div class="pf-form-group">
+        <label class="pf-form-label">Feedback</label>
+        <textarea name="feedback" class="pf-input pf-textarea" rows="4"
+                  placeholder="Give constructive feedback...">@Model.GraderFeedback</textarea>
+      </div>
+
+      <div style="display:flex; gap:0.75rem;">
+        <button type="submit" class="pf-btn">Save Grade</button>
+        <a asp-action="Index" asp-route-courseId="@Model.Assignment.CourseId"
+           class="pf-btn pf-btn--ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

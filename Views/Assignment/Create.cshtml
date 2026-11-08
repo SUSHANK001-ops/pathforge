@@ -1,37 +1,53 @@
-@model PathForge.Models.ViewModels.AssignmentViewModel
 @{
     ViewData["Title"] = "Create Assignment";
+    Layout = "_Layout";
 }
 
-<div class="pf-page flex justify-center py-12">
-    <div class="pf-form-panel">
-        <div class="pf-form-panel__header">
-            <span class="pf-label">EDUCATOR STUDIO</span>
-            <h2 class="pf-section-header">New Assignment</h2>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+  <span class="pf-label">@ViewBag.CourseName</span>
+  <h1 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
+    Create Assignment
+  </h1>
+
+  @if (TempData["Error"] != null)
+  {
+    <div class="pf-alert pf-alert--error" style="margin-bottom:1.5rem; max-width:600px;">@TempData["Error"]</div>
+  }
+
+  <div class="pf-form-panel" style="max-width:600px;">
+    <form method="post" asp-action="Create">
+      @Html.AntiForgeryToken()
+      <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
+
+      <div class="pf-form-group">
+        <label class="pf-form-label">Assignment Title</label>
+        <input type="text" name="title" class="pf-input" required
+               placeholder="e.g. Week 2 Lab Report" />
+      </div>
+
+      <div class="pf-form-group">
+        <label class="pf-form-label">Description / Instructions</label>
+        <textarea name="description" class="pf-input pf-textarea" rows="5"
+                  placeholder="Describe the task and what students should submit..."></textarea>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+        <div class="pf-form-group">
+          <label class="pf-form-label">Due Date</label>
+          <input type="datetime-local" name="dueDate" class="pf-input" required />
         </div>
+        <div class="pf-form-group">
+          <label class="pf-form-label">Max Marks</label>
+          <input type="number" name="maxMarks" class="pf-input"
+                 value="100" min="1" max="1000" required />
+        </div>
+      </div>
 
-        <form asp-action="Create" method="post">
-            <div class="pf-form-group">
-                <label asp-for="Title" class="pf-form-label">Assignment Title</label>
-                <input asp-for="Title" class="pf-input" />
-            </div>
-
-            <div class="pf-form-group">
-                <label asp-for="DueDate" class="pf-form-label">Due Date</label>
-                <input asp-for="DueDate" type="date" class="pf-input" />
-            </div>
-
-            <div class="pf-form-group">
-                <label asp-for="MaxMarks" class="pf-form-label">Maximum Marks</label>
-                <input asp-for="MaxMarks" type="number" class="pf-input" />
-            </div>
-
-            <div class="pf-form-group">
-                <label asp-for="Description" class="pf-form-label">Instructions</label>
-                <textarea asp-for="Description" class="pf-input pf-textarea"></textarea>
-            </div>
-
-            <button type="submit" class="pf-btn w-full text-center">Create Assignment</button>
-        </form>
-    </div>
+      <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+        <button type="submit" class="pf-btn">Create Assignment</button>
+        <a asp-action="Index" asp-route-courseId="@ViewBag.CourseId"
+           class="pf-btn pf-btn--ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
 </div>
