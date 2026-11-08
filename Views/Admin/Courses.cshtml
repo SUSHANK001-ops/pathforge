@@ -1,35 +1,48 @@
+@model IEnumerable<PathForge.Models.Entities.Course>
 @{
-    ViewData["Title"] = "Course Administration";
+    ViewData["Title"] = "All Courses";
+    Layout = "_Layout";
 }
 
-<div class="pf-page py-12">
-    <div class="flex justify-between items-end mb-8 border-b-[3px] border-[var(--dark)] pb-4">
-        <div>
-            <span class="pf-label mb-2">CURRICULUM OVERSIGHT</span>
-            <h1 class="pf-section-header">Course Administration</h1>
-        </div>
-    </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
 
-    <div class="pf-table-wrap">
-        <table class="pf-table">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Educator</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>ASP.NET Core Architecture</td>
-                    <td>Computer Science</td>
-                    <td>Prof. Vance</td>
-                    <td><span class="pf-status pf-status--live">Live</span></td>
-                    <td><a href="/Course/Edit/1" class="pf-btn pf-btn--sm">Edit</a></td>
-                </tr>
-            </tbody>
-        </table>
+  <div style="display:flex; justify-content:space-between; align-items:flex-start;
+              border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <div>
+      <span class="pf-label">Course Oversight</span>
+      <h1 class="pf-section-header" style="margin-top:0.4rem;">All Courses</h1>
     </div>
+    <a asp-action="Index" class="pf-btn pf-btn--ghost pf-btn--sm">← Dashboard</a>
+  </div>
+
+  <div class="pf-table-wrap">
+    <table class="pf-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Educator</th>
+          <th>Category</th>
+          <th>Enrolled</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var course in Model)
+        {
+          <tr>
+            <td>@course.Title</td>
+            <td>@course.Educator.FullName</td>
+            <td>@course.Category</td>
+            <td class="cell-number">@course.Enrolments.Count</td>
+            <td><span class="pf-status pf-status--@course.Status.ToLower()">@course.Status</span></td>
+            <td>
+              <a asp-controller="Course" asp-action="Details" asp-route-id="@course.Id"
+                 class="pf-btn pf-btn--ghost pf-btn--sm">View</a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>

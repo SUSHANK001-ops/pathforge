@@ -1,31 +1,83 @@
+@model IEnumerable<PathForge.Models.Entities.User>
 @{
-    ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Admin Console";
+    Layout = "_Layout";
 }
 
-<div class="pf-page py-12">
-    <div class="mb-8 border-b-[3px] border-[var(--dark)] pb-4">
-        <span class="pf-label mb-2">MANAGEMENT CONSOLE</span>
-        <h1 class="pf-section-header">Admin Control Panel</h1>
-    </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
 
-    <!-- Admin Metric Grid -->
-    <div class="pf-stat-grid mb-8">
-        <div class="pf-stat-cell">
-            <span class="pf-stat-cell__number">248</span>
-            <span class="pf-stat-cell__label">Total Enrolled Students</span>
-        </div>
-        <div class="pf-stat-cell">
-            <span class="pf-stat-cell__number">18</span>
-            <span class="pf-stat-cell__label">Active Courses</span>
-        </div>
-        <div class="pf-stat-cell">
-            <span class="pf-stat-cell__number">94%</span>
-            <span class="pf-stat-cell__label">Platform Completion Rate</span>
-        </div>
-    </div>
+  <span class="pf-label">Root Admin</span>
+  <h1 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
+    Admin Console
+  </h1>
 
-    <div class="flex gap-4">
-        <a href="/Admin/Users" class="pf-btn">Manage Users</a>
-        <a href="/Admin/Courses" class="pf-btn pf-btn--ghost">Review Courses</a>
+  @if (TempData["Success"] != null)
+  {
+    <div class="pf-alert pf-alert--success" style="margin-bottom:1.5rem;">@TempData["Success"]</div>
+  }
+
+  @* Stats grid (fin-grid) *@
+  <div class="pf-stat-grid" style="margin-bottom:3rem;">
+    <div class="pf-stat-cell">
+      <span class="pf-stat-cell__number">@ViewBag.TotalUsers</span>
+      <span class="pf-stat-cell__label">Total Users</span>
     </div>
+    <div class="pf-stat-cell">
+      <span class="pf-stat-cell__number">@ViewBag.ActiveCourses</span>
+      <span class="pf-stat-cell__label">Live Courses</span>
+    </div>
+    <div class="pf-stat-cell">
+      <span class="pf-stat-cell__number">@ViewBag.TotalEnrolments</span>
+      <span class="pf-stat-cell__label">Enrolments</span>
+    </div>
+    <div class="pf-stat-cell">
+      <span class="pf-stat-cell__number">@ViewBag.FlaggedPosts</span>
+      <span class="pf-stat-cell__label">Flagged Posts</span>
+    </div>
+  </div>
+
+  @* Recent users *@
+  <h2 class="pf-card-title" style="margin-bottom:1rem;">Recent Users</h2>
+  <div class="pf-table-wrap">
+    <table class="pf-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var user in Model)
+        {
+          <tr>
+            <td>@user.FullName</td>
+            <td>@user.Email</td>
+            <td><span class="pf-label" style="font-size:0.55rem;">@user.Role</span></td>
+            <td>
+              <span class="pf-status @(user.IsActive ? "pf-status--live" : "pf-status--draft")">
+                @(user.IsActive ? "Active" : "Suspended")
+              </span>
+            </td>
+            <td>
+              <form asp-action="SuspendUser" asp-route-id="@user.Id" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="pf-btn pf-btn--sm pf-btn--ghost">
+                  @(user.IsActive ? "Suspend" : "Reactivate")
+                </button>
+              </form>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+    <a asp-action="Users"   class="pf-btn pf-btn--ghost pf-btn--sm">All Users</a>
+    <a asp-action="Courses" class="pf-btn pf-btn--ghost pf-btn--sm">All Courses</a>
+  </div>
+
 </div>

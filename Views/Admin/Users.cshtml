@@ -1,35 +1,59 @@
+@model IEnumerable<PathForge.Models.Entities.User>
 @{
-    ViewData["Title"] = "User Management";
+    ViewData["Title"] = "All Users";
+    Layout = "_Layout";
 }
 
-<div class="pf-page py-12">
-    <div class="flex justify-between items-end mb-8 border-b-[3px] border-[var(--dark)] pb-4">
-        <div>
-            <span class="pf-label mb-2">DIRECTORY & ROLES</span>
-            <h1 class="pf-section-header">User Management</h1>
-        </div>
-    </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
 
-    <div class="pf-table-wrap">
-        <table class="pf-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Joined</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>System Administrator</td>
-                    <td>admin@pathforge.local</td>
-                    <td><span class="pf-status pf-status--live">Admin</span></td>
-                    <td>Active</td>
-                    <td>Sept 2026</td>
-                </tr>
-            </tbody>
-        </table>
+  <div style="display:flex; justify-content:space-between; align-items:flex-start;
+              border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <div>
+      <span class="pf-label">User Management</span>
+      <h1 class="pf-section-header" style="margin-top:0.4rem;">All Users</h1>
     </div>
+    <a asp-action="Index" class="pf-btn pf-btn--ghost pf-btn--sm">← Dashboard</a>
+  </div>
+
+  @if (TempData["Success"] != null)
+  {
+    <div class="pf-alert pf-alert--success" style="margin-bottom:1.5rem;">@TempData["Success"]</div>
+  }
+
+  <div class="pf-table-wrap">
+    <table class="pf-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var user in Model)
+        {
+          <tr>
+            <td>@user.FullName</td>
+            <td>@user.Email</td>
+            <td><span class="pf-label" style="font-size:0.55rem;">@user.Role</span></td>
+            <td>
+              <span class="pf-status @(user.IsActive ? "pf-status--live" : "pf-status--draft")">
+                @(user.IsActive ? "Active" : "Suspended")
+              </span>
+            </td>
+            <td>
+              <form asp-action="SuspendUser" asp-route-id="@user.Id" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="pf-btn pf-btn--sm pf-btn--ghost">
+                  @(user.IsActive ? "Suspend" : "Reactivate")
+                </button>
+              </form>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </div>
