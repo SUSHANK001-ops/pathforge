@@ -1,22 +1,101 @@
+@model PathForge.Models.ViewModels.ProfileViewModel
 @{
-    ViewData["Title"] = "User Profile";
+    ViewData["Title"] = "My Profile";
+    Layout = "_Layout";
 }
 
-<div class="pf-page py-12">
-    <div class="pf-card--outlined mb-8">
-        <span class="pf-label mb-2">USER PROFILE</span>
-        <h1 class="pf-section-header mb-4">Account Overview</h1>
-        <p class="pf-body mb-6">Manage personal profile details, enrolled learning paths, and account settings.</p>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t-[1.5px] border-[var(--dark)]">
-            <div>
-                <span class="pf-form-label">Full Name</span>
-                <p class="pf-body-cell font-bold">@(Context.Session.GetString("UserName") ?? "Guest User")</p>
-            </div>
-            <div>
-                <span class="pf-form-label">Role</span>
-                <p class="pf-body-cell font-bold">@(Context.Session.GetString("UserRole") ?? "Unauthenticated")</p>
-            </div>
-        </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  @* Page header *@
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2.5rem;">
+    <span class="pf-label">Account</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">My Profile</h1>
+    <p class="pf-body" style="opacity:0.6; margin-top:0.35rem;">
+      @Model.Email &nbsp;·&nbsp;
+      <span class="pf-status pf-status--live">@Model.Role</span>
+    </p>
+  </div>
+
+  @if (TempData["Success"] != null)
+  {
+    <div class="pf-alert pf-alert--success" style="margin-bottom:1.5rem;">
+      @TempData["Success"]
     </div>
+  }
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start;">
+
+    @* Edit form *@
+    <div>
+      <h2 class="pf-card-title" style="margin-bottom:1.25rem;">Edit Details</h2>
+
+      <form asp-action="Profile" asp-controller="Auth" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="pf-form-group">
+          <label asp-for="FullName" class="pf-form-label">Full Name</label>
+          <input asp-for="FullName" class="pf-input" />
+          <span asp-validation-for="FullName" class="pf-field-error"></span>
+        </div>
+
+        <div class="pf-form-group">
+          <label class="pf-form-label">Email Address (cannot change)</label>
+          <input type="text" class="pf-input" value="@Model.Email" disabled
+                 style="opacity:0.5; cursor:not-allowed;" />
+        </div>
+
+        <div class="pf-form-group">
+          <label asp-for="Bio" class="pf-form-label">Bio</label>
+          <textarea asp-for="Bio" class="pf-input pf-textarea"
+                    placeholder="Tell others about yourself..."></textarea>
+        </div>
+
+        <h3 class="pf-card-title" style="margin:1.5rem 0 1rem; font-size:1.1rem;">
+          Change Password
+        </h3>
+        <p class="pf-body" style="font-size:0.8rem; opacity:0.6; margin-bottom:1rem;">
+          Leave blank to keep your current password.
+        </p>
+
+        <div class="pf-form-group">
+          <label asp-for="NewPassword" class="pf-form-label">New Password</label>
+          <input asp-for="NewPassword" class="pf-input" type="password"
+                 placeholder="Min 8 characters" />
+          <span asp-validation-for="NewPassword" class="pf-field-error"></span>
+        </div>
+
+        <div class="pf-form-group">
+          <label asp-for="ConfirmNewPassword" class="pf-form-label">Confirm New Password</label>
+          <input asp-for="ConfirmNewPassword" class="pf-input" type="password" />
+          <span asp-validation-for="ConfirmNewPassword" class="pf-field-error"></span>
+        </div>
+
+        <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+          <button type="submit" class="pf-btn">Save Changes</button>
+          <a href="/" class="pf-btn pf-btn--ghost">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+    @* Info panel (fin-grid cell style) *@
+    <div class="pf-stat-grid" style="align-self:start;">
+      <div class="pf-stat-cell">
+        <span class="pf-stat-cell__label">Role</span>
+        <span class="pf-stat-cell__number" style="font-size:1.5rem;">@Model.Role</span>
+      </div>
+      <div class="pf-stat-cell">
+        <span class="pf-stat-cell__label">Member Since</span>
+        <span class="pf-stat-cell__number" style="font-size:1.25rem;">
+          2026
+        </span>
+      </div>
+    </div>
+
+  </div>
+
 </div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

@@ -1,116 +1,73 @@
 @{
-    ViewData["Title"] = "Home — Learning Constellations";
+    ViewData["Title"] = "PathForge — Forge Your Path to Mastery";
+    Layout = "_Layout";
 }
 
-<div class="pf-page">
-    <!-- Hero Section -->
-    <header class="py-12 border-b-[3px] border-[var(--dark)]">
-        <span class="pf-label mb-3">PATHFORGE &middot; LEARNING ARCHITECTURE &middot; PHASE 1</span>
-        <h1 class="pf-hero-title mb-4">
-            FORGE KNOWLEDGE INTO
-            <span class="pf-hero-title-red">CONSTELLATIONS</span>
-        </h1>
-        <p class="pf-body text-lg mb-8">
-            An editorial learning platform engineered for mastery. Explore structured learning paths, interactive modules, assessments, and real-time collaboration within an uncompromising bold poster design system.
-        </p>
-        <div class="flex flex-wrap gap-4 items-center">
-            <a href="/Course" class="pf-btn">Explore Courses</a>
-            <a href="/Auth/Register" class="pf-btn pf-btn--ghost">Get Started</a>
-        </div>
-    </header>
+@* ── HERO SECTION ──────────────────────────────────────── *@
+<section class="pf-page" style="padding-top:5rem; padding-bottom:4rem;">
+  <div>
+    @* Eyebrow label — Space Grotesk uppercase red *@
+    <span class="pf-label">Web-Based Learning System</span>
 
-    <!-- Metrics Stat Grid -->
-    <section class="my-12">
-        <span class="pf-label mb-2">SYSTEM ARCHITECTURE METRICS</span>
-        <div class="pf-stat-grid">
-            <div class="pf-stat-cell">
-                <span class="pf-stat-cell__number">14</span>
-                <span class="pf-stat-cell__label">Database Entities</span>
-            </div>
-            <div class="pf-stat-cell">
-                <span class="pf-stat-cell__number">10</span>
-                <span class="pf-stat-cell__label">.NET 10 Framework</span>
-            </div>
-            <div class="pf-stat-cell">
-                <span class="pf-stat-cell__number">v4</span>
-                <span class="pf-stat-cell__label">Tailwind CSS Engine</span>
-            </div>
-            <div class="pf-stat-cell">
-                <span class="pf-stat-cell__number">100%</span>
-                <span class="pf-stat-cell__label">Square-Corner Poster Style</span>
-            </div>
-        </div>
-    </section>
+    @* Three-line Shrikhand hero (FRAME.md hero-title-stack) *@
+    <div style="margin-top:1rem; margin-bottom:1.5rem;">
+      <div class="pf-hero-title">Learning,</div>
+      <div class="pf-hero-title-red">mapped</div>
+      <div class="pf-hero-title" style="transform:rotate(2deg); display:inline-block;">
+        one step at a time.
+      </div>
+    </div>
 
-    <!-- Featured Courses / Learning Paths Section -->
-    <section class="my-12">
-        <div class="flex justify-between items-baseline mb-6 border-b-[1.5px] border-[var(--dark)] pb-2">
-            <div>
-                <span class="pf-label">CURATED CURRICULUM</span>
-                <h2 class="pf-section-header">Featured Constellations</h2>
-            </div>
-            <a href="/Course" class="pf-label text-[var(--red)] hover:underline">View All &rarr;</a>
-        </div>
+    @* Baskerville tagline *@
+    <p class="pf-body" style="max-width:520px; margin-bottom:2rem;">
+      Join courses, track your progress on a living skill map, and learn
+      alongside educators who share resources, feedback, and discussion in real time.
+    </p>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Course Card 1 -->
-            <div class="pf-course-card">
-                <span class="pf-course-card__category">Computer Science</span>
-                <h3 class="pf-course-card__title">ASP.NET Core Architecture & Systems</h3>
-                <p class="pf-body-cell">
-                    Deep dive into MVC lifecycle, session management, middleware pipelines, and scalable enterprise patterns.
-                </p>
-                <div class="pf-course-card__meta">
-                    <span>Educator: Prof. Vance</span> &middot; <span class="pf-status pf-status--live">Live</span>
-                </div>
-                <div class="pf-course-card__actions">
-                    <a href="/Course/Details/1" class="pf-btn pf-btn--sm">View Path</a>
-                </div>
-            </div>
+    @* CTAs *@
+    <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+      @if (ViewBag.IsLoggedIn == true)
+      {
+        <a href="/Course" class="pf-btn">My Courses</a>
+        <a href="/Progress" class="pf-btn pf-btn--ghost">View Progress</a>
+      }
+      else
+      {
+        <a href="/Auth/Register" class="pf-btn">Start Learning</a>
+        <a href="/Course" class="pf-btn pf-btn--ghost">Browse Courses</a>
+      }
+    </div>
+  </div>
+</section>
 
-            <!-- Course Card 2 -->
-            <div class="pf-course-card">
-                <span class="pf-course-card__category">Database Engineering</span>
-                <h3 class="pf-course-card__title">Entity Framework Core & Relational Design</h3>
-                <p class="pf-body-cell">
-                    Design robust schemas with fluent API configurations, restrict cascade constraints, and migrations.
-                </p>
-                <div class="pf-course-card__meta">
-                    <span>Educator: Dr. Aris</span> &middot; <span class="pf-status pf-status--live">Live</span>
-                </div>
-                <div class="pf-course-card__actions">
-                    <a href="/Course/Details/2" class="pf-btn pf-btn--sm">View Path</a>
-                </div>
-            </div>
+@* ── STATS STRIP — fin-grid style ─────────────────────── *@
+<section class="pf-section-light">
+  <div class="pf-page" style="padding-top:2.5rem; padding-bottom:2.5rem;">
+    <div class="pf-stat-grid">
+      <div class="pf-stat-cell">
+        <span class="pf-stat-cell__number">3</span>
+        <span class="pf-stat-cell__label">User Roles</span>
+      </div>
+      <div class="pf-stat-cell">
+        <span class="pf-stat-cell__number">5</span>
+        <span class="pf-stat-cell__label">Core Modules</span>
+      </div>
+      <div class="pf-stat-cell">
+        <span class="pf-stat-cell__number">∞</span>
+        <span class="pf-stat-cell__label">Learning Paths</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-            <!-- Course Card 3 -->
-            <div class="pf-course-card">
-                <span class="pf-course-card__category">Design Systems</span>
-                <h3 class="pf-course-card__title">Editorial Typography & Poster Aesthetics</h3>
-                <p class="pf-body-cell">
-                    Translating bold print editorial standards into high-performance web systems with Tailwind CSS v4.
-                </p>
-                <div class="pf-course-card__meta">
-                    <span>Educator: Elena Rostova</span> &middot; <span class="pf-status pf-status--draft">Draft</span>
-                </div>
-                <div class="pf-course-card__actions">
-                    <a href="/Course/Details/3" class="pf-btn pf-btn--sm pf-btn--ghost">Preview</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Architectural Principles -->
-    <section class="pf-section-light my-12 border-[3px] border-[var(--dark)]">
-        <span class="pf-label mb-2">DESIGN MANIFESTO</span>
-        <h2 class="pf-section-header mb-4">The Uncompromising Frame</h2>
-        <p class="pf-body mb-6">
-            PathForge abandons generic SaaS templates in favor of high-contrast editorial hierarchy:
-        </p>
-        <ul class="pf-bullets">
-            <li>Strict four-color palette: Pure White, Deep Charcoal, Flame Red, and Editorial Cream.</li>
-            <li>No rounded corners or soft ambient blur — geometry is unapologetically sharp, structured, and confident.</li>
-            <li>Cantilevered red leftbar cards and fin-grid double borders establish unwavering reading rhythm.</li>
-        </ul>
-    </section>
-</div>
+@* ── TECH STACK LABELS ────────────────────────────────── *@
+<section class="pf-page" style="padding-top:2rem; padding-bottom:2rem;">
+  <div style="display:flex; gap:1rem; flex-wrap:wrap; border-bottom:var(--border-inner); padding-bottom:1.5rem;">
+    @foreach (var tech in new[]{"ASP.NET Core","SQL Server","HTML5 / CSS3","JavaScript","MVC Pattern"})
+    {
+      <span class="pf-status pf-status--draft" style="opacity:1; font-size:0.6rem; padding:0.2rem 0.6rem;">
+        @tech
+      </span>
+    }
+  </div>
+</section>

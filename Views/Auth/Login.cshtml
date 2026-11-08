@@ -1,41 +1,64 @@
 @model PathForge.Models.ViewModels.LoginViewModel
 @{
     ViewData["Title"] = "Log In";
+    Layout = "_Layout";
 }
 
-<div class="pf-page flex justify-center py-12">
-    <div class="pf-form-panel">
-        <div class="pf-form-panel__header">
-            <span class="pf-label">AUTHENTICATION</span>
-            <h2 class="pf-section-header">Sign In</h2>
-        </div>
+<section class="pf-section-light" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:3rem 1rem;">
 
-        <form asp-action="Login" method="post">
-            <div asp-validation-summary="ModelOnly" class="pf-alert pf-alert--error mb-4"></div>
+  <div class="pf-form-panel">
 
-            <div class="pf-form-group">
-                <label asp-for="Email" class="pf-form-label">Email Address</label>
-                <input asp-for="Email" class="pf-input" placeholder="user@domain.com" />
-                <span asp-validation-for="Email" class="pf-field-error"></span>
-            </div>
-
-            <div class="pf-form-group">
-                <label asp-for="Password" class="pf-form-label">Password</label>
-                <input asp-for="Password" class="pf-input" placeholder="••••••••" />
-                <span asp-validation-for="Password" class="pf-field-error"></span>
-            </div>
-
-            <div class="pf-form-group flex items-center gap-2">
-                <input asp-for="RememberMe" class="accent-[var(--red)]" />
-                <label asp-for="RememberMe" class="pf-bullet-body">Remember this session</label>
-            </div>
-
-            <button type="submit" class="pf-btn w-full text-center">Enter Platform</button>
-
-            <div class="mt-6 pt-4 border-t-[1.5px] border-[var(--dark)] text-center">
-                <span class="pf-bullet-body">Need an account?</span>
-                <a href="/Auth/Register" class="pf-label inline-block ml-2 text-[var(--red)]">Register Here</a>
-            </div>
-        </form>
+    <div class="pf-form-panel__header">
+      <span class="pf-label">PathForge</span>
+      <h1 class="pf-section-header" style="margin-top:0.5rem;">Welcome back</h1>
+      <p class="pf-body" style="margin-top:0.5rem; font-size:0.85rem; opacity:0.7;">
+        Log in to continue your path.
+      </p>
     </div>
-</div>
+
+    @* TempData success from registration *@
+    @if (TempData["Success"] != null)
+    {
+      <div class="pf-alert pf-alert--success" style="margin-bottom:1rem;">
+        @TempData["Success"]
+      </div>
+    }
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+      <div class="pf-alert pf-alert--error" style="margin-bottom:1rem;">
+        <div asp-validation-summary="All"></div>
+      </div>
+    }
+
+    <form asp-action="Login" asp-controller="Auth" method="post">
+      @Html.AntiForgeryToken()
+
+      <div class="pf-form-group">
+        <label asp-for="Email" class="pf-form-label">Email Address</label>
+        <input asp-for="Email" class="pf-input" type="email" placeholder="you@example.com" />
+        <span asp-validation-for="Email" class="pf-field-error"></span>
+      </div>
+
+      <div class="pf-form-group">
+        <label asp-for="Password" class="pf-form-label">Password</label>
+        <input asp-for="Password" class="pf-input" type="password" placeholder="••••••••" />
+        <span asp-validation-for="Password" class="pf-field-error"></span>
+      </div>
+
+      <button type="submit" class="pf-btn" style="width:100%; margin-top:0.5rem;">
+        Log In
+      </button>
+    </form>
+
+    <p class="pf-body" style="margin-top:1.25rem; font-size:0.8rem; text-align:center;">
+      Don't have an account? <a asp-action="Register" asp-controller="Auth">Register</a>
+    </p>
+
+  </div>
+
+</section>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}
