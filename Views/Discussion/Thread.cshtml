@@ -1,24 +1,65 @@
+@model PathForge.Models.Entities.DiscussionPost
 @{
-    ViewData["Title"] = "Discussion Thread";
+    ViewData["Title"] = Model.Title;
+    Layout = "_Layout";
+    int userId   = (int)(ViewBag.UserId ?? 0);
+    string role  = ViewBag.UserRole ?? "";
 }
 
-<div class="pf-page py-12">
-    <div class="pf-card--outlined mb-8">
-        <span class="pf-label">THREAD #104</span>
-        <h1 class="pf-card-title my-2">How to handle complex relationships with DeleteBehavior.Restrict?</h1>
-        <p class="pf-body my-4">
-            When configuring foreign keys for entities with multiple references to User, such as ChatMessage or DiscussionPost, SQL Server triggers circular cascade errors. Restrict behavior resolves this cleanly.
-        </p>
-        <span class="pf-course-card__meta">Posted by Alex Rivera &middot; 2 hours ago</span>
-    </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
 
-    <div class="pf-form-panel max-w-full">
-        <h3 class="pf-card-title mb-4">Post a Reply</h3>
-        <form method="post">
-            <div class="pf-form-group">
-                <textarea class="pf-input pf-textarea" placeholder="Share your insight..."></textarea>
-            </div>
-            <button type="submit" class="pf-btn">Submit Reply</button>
-        </form>
+  <a asp-action="Index" asp-route-courseId="@Model.CourseId"
+     class="pf-label" style="text-decoration:none; margin-bottom:1.5rem; display:inline-block;">
+    ← Back to Forum
+  </a>
+
+  @* Original post *@
+  <div class="pf-card pf-card--outlined" style="padding:1.5rem; margin-top:1rem; margin-bottom:2rem;">
+    <h1 class="pf-section-header" style="font-size:1.6rem;">@Model.Title</h1>
+    <p class="pf-body-cell" style="margin:0.3rem 0 1rem; opacity:0.6;">
+      By @Model.Author.FullName &nbsp;·&nbsp; @Model.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+    </p>
+    <p class="pf-body">@Model.Body</p>
+    @if (userId == Model.AuthorId || role == "Admin")
+    {
+      <form asp-action="Delete" method="post" style="margin-top:1rem;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="pf-btn pf-btn--danger pf-btn--sm"
+                onclick="return confirm('Delete this post?')">Delete</button>
+      </form>
+    }
+  </div>
+
+  @* Replies *@
+  <h2 class="pf-card-title" style="margin-bottom:1rem;">
+    Replies (@Model.Replies.Count)
+  </h2>
+
+  @foreach (var reply in Model.Replies)
+  {
+    <div class="pf-card" style="margin-bottom:0.75rem; padding:1rem 1rem 1rem 1.25rem;
+         border-left:var(--border-leftbar); background:var(--light);">
+      <p class="pf-body-cell" style="opacity:0.6; margin-bottom:0.4rem;">
+        @reply.Author.FullName &nbsp;·&nbsp; @reply.CreatedAt.ToString("dd MMM, HH:mm")
+      </p>
+      <p class="pf-body" style="font-size:0.9rem;">@reply.Body</p>
     </div>
+  }
+
+  @* Reply form *@
+  <div style="margin-top:2rem; border-top:var(--border-outer); padding-top:1.5rem;">
+    <h3 class="pf-card-title" style="font-size:1rem; margin-bottom:1rem;">Leave a Reply</h3>
+    <form asp-action="Reply" method="post">
+      @Html.AntiForgeryToken()
+      <input type="hidden" name="threadId" value="@Model.Id" />
+      <input type="hidden" name="courseId" value="@Model.CourseId" />
+      <div class="pf-form-group">
+        <label class="pf-form-label">Your Reply</label>
+        <textarea name="body" class="pf-input pf-textarea" required
+                  placeholder="Write your reply..."></textarea>
+      </div>
+      <button type="submit" class="pf-btn">Post Reply</button>
+    </form>
+  </div>
 </div>

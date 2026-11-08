@@ -1,24 +1,69 @@
+@model IEnumerable<PathForge.Models.Entities.DiscussionPost>
 @{
-    ViewData["Title"] = "Discussions";
+    ViewData["Title"] = "Discussion — " + (ViewBag.Course as PathForge.Models.Entities.Course)?.Title;
+    Layout = "_Layout";
+    var course = ViewBag.Course as PathForge.Models.Entities.Course;
 }
 
-<div class="pf-page py-12">
-    <div class="flex justify-between items-end mb-8 border-b-[3px] border-[var(--dark)] pb-4">
-        <div>
-            <span class="pf-label mb-2">COMMUNITY & DIALOGUE</span>
-            <h1 class="pf-section-header">Course Forum</h1>
-        </div>
-        <button class="pf-btn pf-btn--sm">+ New Topic</button>
-    </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
 
-    <div class="space-y-4">
-        <div class="pf-card--outlined">
-            <span class="pf-label">GENERAL ARCHITECTURE</span>
-            <h3 class="pf-card-title my-1"><a href="/Discussion/Thread/1">How to handle complex relationships with DeleteBehavior.Restrict?</a></h3>
-            <p class="pf-body-cell">Discussion on circular dependency prevention in EF Core.</p>
-            <div class="pf-course-card__meta mt-3">
-                <span>By Alex Rivera</span> &middot; <span>5 Replies</span>
-            </div>
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <span class="pf-label">@course?.Title</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">Discussion Forum</h1>
+  </div>
+
+  @* New thread form *@
+  <div class="pf-card pf-card--outlined" style="margin-bottom:2rem; padding:1.25rem;">
+    <h2 class="pf-card-title" style="font-size:1.1rem; margin-bottom:1rem;">
+      Start a Discussion
+    </h2>
+    <form asp-action="CreateThread" method="post">
+      @Html.AntiForgeryToken()
+      <input type="hidden" name="courseId" value="@course?.Id" />
+      <div class="pf-form-group">
+        <label class="pf-form-label">Subject</label>
+        <input type="text" name="title" class="pf-input" required
+               placeholder="What do you want to discuss?" />
+      </div>
+      <div class="pf-form-group">
+        <label class="pf-form-label">Message</label>
+        <textarea name="body" class="pf-input pf-textarea" required
+                  placeholder="Write your question or comment..."></textarea>
+      </div>
+      <button type="submit" class="pf-btn">Post Thread</button>
+    </form>
+  </div>
+
+  @* Thread list *@
+  @if (!Model.Any())
+  {
+    <div class="pf-alert">No discussions yet. Start the first one above.</div>
+  }
+  else
+  {
+    @foreach (var thread in Model)
+    {
+      <div class="pf-card pf-card--outlined" style="margin-bottom:0.75rem; padding:1rem 1.25rem;">
+        <div style="display:flex; justify-content:space-between; align-items:start;">
+          <div>
+            <a asp-action="Thread" asp-route-id="@thread.Id"
+               class="pf-card-title" style="font-size:1.05rem; color:var(--dark);
+               text-decoration:none; border-bottom:1px solid var(--red);">
+              @thread.Title
+            </a>
+            <p class="pf-body-cell" style="margin-top:0.25rem; opacity:0.6;">
+              By @thread.Author.FullName &nbsp;·&nbsp;
+              @thread.CreatedAt.ToString("dd MMM yyyy") &nbsp;·&nbsp;
+              @thread.Replies.Count @(thread.Replies.Count == 1 ? "reply" : "replies")
+            </p>
+          </div>
         </div>
-    </div>
+      </div>
+    }
+  }
+
+  <a asp-controller="Course" asp-action="Details" asp-route-id="@course?.Id"
+     class="pf-label" style="text-decoration:none; display:inline-block; margin-top:1rem;">
+    ← Back to Course
+  </a>
 </div>
