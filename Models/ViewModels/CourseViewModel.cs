@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using PathForge.Models.Entities;
 
 namespace PathForge.Models.ViewModels
 {
@@ -8,24 +7,54 @@ namespace PathForge.Models.ViewModels
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Title is required")]
-        [StringLength(200)]
+        [MaxLength(200)]
         public string Title { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Description is required")]
         public string Description { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Category is required")]
-        [StringLength(100)]
+        [MaxLength(100)]
         public string Category { get; set; } = string.Empty;
 
-        public string Status { get; set; } = "Draft";
-        public string? ThumbnailUrl { get; set; }
+        // Thumbnail file (optional upload)
+        public IFormFile? ThumbnailFile { get; set; }
+        public string? ExistingThumbnailUrl { get; set; }
+    }
 
-        public int EducatorId { get; set; }
-        public string? EducatorName { get; set; }
+    public class ModuleViewModel
+    {
+        public int Id { get; set; }
+        public int CourseId { get; set; }
 
-        public int EnrolledCount { get; set; }
-        public int ModuleCount { get; set; }
-        public List<Module> Modules { get; set; } = new List<Module>();
+        [Required(ErrorMessage = "Module title is required")]
+        [MaxLength(200)]
+        public string Title { get; set; } = string.Empty;
+
+        public string? Description { get; set; }
+
+        [Required]
+        public string Type { get; set; } = "Lesson";  // Lesson | Video | Lab | Reading
+
+        public int DisplayOrder { get; set; }
+    }
+
+    public class MaterialViewModel
+    {
+        public int Id { get; set; }
+        public int ModuleId { get; set; }
+
+        [Required(ErrorMessage = "Material title is required")]
+        [MaxLength(200)]
+        public string Title { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Please select a file type")]
+        public string Type { get; set; } = "Document";  // Document | Video | Link | Slide
+
+        // File upload — required only for non-Link types
+        public IFormFile? File { get; set; }
+
+        // For links — direct URL
+        public string? LinkUrl { get; set; }
     }
 }
