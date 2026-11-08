@@ -1,61 +1,169 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PathForge.Data;
+using PathForge.Models.Entities;
 using PathForge.Models.ViewModels;
 
 namespace PathForge.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly PathForgeDbContext _context;
+        private readonly PathForgeDbContext _db;
 
-        public AuthController(PathForgeDbContext context)
+        public AuthController(PathForgeDbContext db)
         {
-            _context = context;
+            _db = db;
         }
 
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Login(LoginViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-            // Handled fully in Phase 2
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpGet]
+        // ── GET /Auth/Register ──────────────────────────────────────
         public IActionResult Register()
         {
+            if (HttpContext.Session.GetString("UserId") != null)
+                return RedirectToAction("Index", "Home");
             return View();
         }
 
+        // ── POST /Auth/Register ─────────────────────────────────────
         [HttpPost]
-        public IActionResult Register(RegisterViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
+                return View(model);
+
+            // Block duplicate emails
+            bool emailTaken = await _db.Users.AnyAsync(u => u.Email == model.Email);
+            if (emailTaken)
             {
+                ModelState.AddModelError("Email", "An account with this email already exists");
                 return View(model);
             }
-            // Handled fully in Phase 2
+
+            // Only allow Student or Educator from the registration form
+            if (model.Role != "Student" && model.Role != "Educator")
+                model.Role = "Student";
+
+            var user = new User
+            {
+                FullName     = model.FullName,
+                Email        = model.Email,
+                Role         = model.Role,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password)
+            };
+
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "Account created. Please log in.";
             return RedirectToAction("Login");
         }
 
-        public IActionResult Logout()
+        // ── GET /Auth/Login ─────────────────────────────────────────
+        public IActionResult Login()
         {
-            HttpContext.Session.Clear();
+            if (HttpContext.Session.GetString("UserId") != null)
+                return RedirectToAction("Index", "Home");
+            return View();
+        }
+
+        // ── POST /Auth/Login ────────────────────────────────────────
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _db.Users
+                .FirstOrDefaultAsync(u => u.Email == model.Email && u.IsActive);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+            {
+                ModelState.AddModelError(string.Empty, "Incorrect email or password");
+                return View(model);
+            }
+
+            // Write session values
+            HttpContext.Session.SetString("UserId",    user.Id.ToString());
+            HttpContext.Session.SetString("UserName",  user.FullName);
+            HttpContext.Session.SetString("UserRole",  user.Role);
+            HttpContext.Session.SetString("UserEmail", user.Email);
+
+            // Redirect by role
+            if (user.Role == "Admin")
+                return RedirectToAction("Index", "Admin");
+
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Profile()
+        // ── GET /Auth/Logout ────────────────────────────────────────
+        public IActionResult Logout()
         {
-            return View();
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
+        }
+
+        // ── GET /Auth/Profile ───────────────────────────────────────
+        public async Task<IActionResult> Profile()
+        {
+            int? userId = GetSessionUserId();
+            if (userId == null) return RedirectToAction("Login");
+
+            var user = await _db.Users.FindAsync(userId);
+            if (user == null) return RedirectToAction("Login");
+
+            var vm = new ProfileViewModel
+            {
+                Id       = user.Id,
+                FullName = user.FullName,
+                Email    = user.Email,
+                Role     = user.Role,
+                Bio      = user.Bio
+            };
+            return View(vm);
+        }
+
+        // ── POST /Auth/Profile ──────────────────────────────────────
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(ProfileViewModel model)
+        {
+            int? userId = GetSessionUserId();
+            if (userId == null) return RedirectToAction("Login");
+
+            // Clear password fields from validation if not changing password
+            if (string.IsNullOrWhiteSpace(model.NewPassword))
+            {
+                ModelState.Remove("NewPassword");
+                ModelState.Remove("ConfirmNewPassword");
+            }
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = await _db.Users.FindAsync(userId);
+            if (user == null) return RedirectToAction("Login");
+
+            user.FullName = model.FullName;
+            user.Bio      = model.Bio;
+
+            if (!string.IsNullOrWhiteSpace(model.NewPassword))
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+
+            await _db.SaveChangesAsync();
+
+            // Update session name in case it changed
+            HttpContext.Session.SetString("UserName", user.FullName);
+
+            TempData["Success"] = "Profile updated successfully";
+            return RedirectToAction("Profile");
+        }
+
+        // ── HELPER — get int user ID from session ──────────────────
+        private int? GetSessionUserId()
+        {
+            string? val = HttpContext.Session.GetString("UserId");
+            return int.TryParse(val, out int id) ? id : null;
         }
     }
 }
