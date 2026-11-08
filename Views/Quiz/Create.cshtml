@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Create Quiz";
+    Layout = "_Layout";
+}
+
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+  <span class="pf-label">Quiz Builder</span>
+  <h1 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
+    Create Quiz
+  </h1>
+
+  <div class="pf-form-panel" style="max-width:600px;">
+    <form asp-action="Create" method="post">
+      @Html.AntiForgeryToken()
+      <input type="hidden" name="courseId" value="@ViewBag.CourseId" />
+
+      <div class="pf-form-group">
+        <label class="pf-form-label">Quiz Title</label>
+        <input type="text" name="title" class="pf-input" required
+               placeholder="e.g. Module 1 Knowledge Check" />
+      </div>
+
+      <div class="pf-form-group">
+        <label class="pf-form-label">Description (optional)</label>
+        <textarea name="description" class="pf-input pf-textarea" rows="3"></textarea>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+        <div class="pf-form-group">
+          <label class="pf-form-label">Time Limit (minutes)</label>
+          <input type="number" name="timeLimitMinutes" class="pf-input"
+                 value="30" min="1" max="300" required />
+        </div>
+        <div class="pf-form-group">
+          <label class="pf-form-label">Pass Mark (%)</label>
+          <input type="number" name="passMarkPercent" class="pf-input"
+                 value="50" min="0" max="100" required />
+        </div>
+      </div>
+
+      <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+        <button type="submit" class="pf-btn">Create &amp; Add Questions</button>
+        <a asp-controller="Course" asp-action="EditModules" asp-route-id="@ViewBag.CourseId"
+           class="pf-btn pf-btn--ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>

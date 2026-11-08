@@ -1,21 +1,50 @@
+@model PathForge.Models.Entities.QuizAttempt
 @{
-    ViewData["Title"] = "Quiz Results";
+    ViewData["Title"] = "Quiz Result";
+    Layout = "_Layout";
 }
 
-<div class="pf-page py-12">
-    <div class="pf-card--outlined mb-8">
-        <span class="pf-label">ASSESSMENT OUTCOME</span>
-        <h1 class="pf-hero-title mb-2">Results & Feedback</h1>
-        <div class="flex items-center gap-6 my-6">
-            <div>
-                <span class="pf-stat-cell__number">85%</span>
-                <span class="pf-stat-cell__label">Final Score</span>
-            </div>
-            <div>
-                <span class="pf-status pf-status--live text-sm px-3 py-1">PASSED</span>
-            </div>
-        </div>
-        <p class="pf-body mb-6">You demonstrated proficiency in ASP.NET Core Middleware and Lifecycle management.</p>
-        <a href="/Course" class="pf-btn">Continue Learning</a>
+<div class="pf-page" style="padding-top:5rem; padding-bottom:5rem; text-align:center;">
+
+  <span class="pf-label" style="display:block;">Quiz Result</span>
+  <h1 class="pf-section-header" style="margin-top:0.5rem; margin-bottom:0.5rem;">
+    @Model.Quiz.Title
+  </h1>
+
+  @* Big stat number — FRAME.md stat-big *@
+  <div style="margin:2.5rem 0;">
+    <div class="pf-stat-big" style="display:block; text-align:center;">
+      @Model.ScorePercent%
     </div>
+    <span class="pf-label" style="display:block; margin-top:1rem; font-size:0.75rem;">
+      @Model.CorrectAnswers of @Model.TotalQuestions correct
+    </span>
+  </div>
+
+  @* Pass/Fail block *@
+  @if (Model.Passed)
+  {
+    <div class="pf-alert pf-alert--success" style="display:inline-block; padding:0.75rem 2rem;">
+      PASSED — Well done!
+    </div>
+  }
+  else
+  {
+    <div class="pf-alert pf-alert--error" style="display:inline-block; padding:0.75rem 2rem;">
+      NOT PASSED — Required @Model.Quiz.PassMarkPercent%
+    </div>
+  }
+
+  @* Progress bar for score *@
+  <div class="pf-progress" style="margin:2rem auto; max-width:400px;">
+    <div class="pf-progress__fill" style="width:@Model.ScorePercent%;"></div>
+  </div>
+
+  <div style="display:flex; gap:0.75rem; justify-content:center; margin-top:1.5rem;">
+    <a asp-controller="Course" asp-action="Details"
+       asp-route-id="@Model.Quiz.CourseId" class="pf-btn">
+      Back to Course
+    </a>
+  </div>
+
 </div>
