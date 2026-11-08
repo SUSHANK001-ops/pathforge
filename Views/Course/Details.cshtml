@@ -1,17 +1,127 @@
+@model PathForge.Models.Entities.Course
 @{
-    ViewData["Title"] = "Course Details";
+    ViewData["Title"] = Model.Title;
+    Layout = "_Layout";
+    bool isEnrolled = ViewBag.IsEnrolled == true;
+    bool isOwner    = ViewBag.IsOwner == true;
+    string userRole = ViewBag.UserRole ?? "";
 }
 
-<div class="pf-page py-12">
-    <div class="pf-card--outlined mb-8">
-        <span class="pf-label mb-2">CONSTELLATION OVERVIEW</span>
-        <h1 class="pf-hero-title mb-4">ASP.NET Core Architecture</h1>
-        <p class="pf-body mb-6">
-            Explore the complete end-to-end mechanics of ASP.NET Core MVC, entity management, and session state.
-        </p>
-        <div class="flex gap-4">
-            <button class="pf-btn">Enroll In Course</button>
-            <a href="/Course" class="pf-btn pf-btn--ghost">&larr; Back to Catalog</a>
-        </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  @* Hero row *@
+  <div style="display:grid; grid-template-columns:1fr auto; gap:2rem;
+              align-items:start; border-bottom:var(--border-outer);
+              padding-bottom:2rem; margin-bottom:2.5rem;">
+    <div>
+      <span class="pf-label">@Model.Category</span>
+      <h1 class="pf-section-header" style="margin-top:0.4rem;">@Model.Title</h1>
+      <p class="pf-body" style="margin-top:0.75rem; max-width:600px;">@Model.Description</p>
+      <p class="pf-body" style="margin-top:0.5rem; font-size:0.8rem; opacity:0.6;">
+        By @Model.Educator.FullName &nbsp;·&nbsp;
+        @Model.Enrolments.Count enrolled &nbsp;·&nbsp;
+        <span class="pf-status pf-status--@Model.Status.ToLower()">@Model.Status</span>
+      </p>
     </div>
+
+    <div style="display:flex; flex-direction:column; gap:0.75rem; min-width:160px;">
+      @if (isOwner || userRole == "Admin")
+      {
+        <a asp-action="EditModules" asp-route-id="@Model.Id" class="pf-btn pf-btn--ghost pf-btn--sm">
+          Manage Modules
+        </a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="pf-btn pf-btn--ghost pf-btn--sm">
+          Edit Course
+        </a>
+        <a asp-controller="Assignment" asp-action="Index" asp-route-courseId="@Model.Id"
+           class="pf-btn pf-btn--ghost pf-btn--sm">Assignments</a>
+        <a asp-controller="Discussion" asp-action="Index" asp-route-courseId="@Model.Id"
+           class="pf-btn pf-btn--ghost pf-btn--sm">Discussion</a>
+      }
+      else if (userRole == "Student" && !isEnrolled)
+      {
+        <form asp-action="Enrol" asp-route-id="@Model.Id" method="post">
+          @Html.AntiForgeryToken()
+          <button type="submit" class="pf-btn" style="width:100%;">Enrol Now</button>
+        </form>
+      }
+      else if (isEnrolled)
+      {
+        <a asp-controller="Progress" asp-action="Index" class="pf-btn">
+          My Progress
+        </a>
+        <a asp-controller="Assignment" asp-action="Index" asp-route-courseId="@Model.Id"
+           class="pf-btn pf-btn--ghost pf-btn--sm">Assignments</a>
+        <a asp-controller="Discussion" asp-action="Index" asp-route-courseId="@Model.Id"
+           class="pf-btn pf-btn--ghost pf-btn--sm">Discussion</a>
+      }
+    </div>
+  </div>
+
+  @* Module list *@
+  <h2 class="pf-card-title" style="margin-bottom:1.5rem;">Course Modules</h2>
+
+  @if (!Model.Modules.Any())
+  {
+    <div class="pf-alert">No modules added yet.</div>
+  }
+  else
+  {
+    <div style="display:flex; flex-direction:column; gap:1rem;">
+      @foreach (var module in Model.Modules)
+      {
+        <div class="pf-card pf-card--outlined">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <div>
+              <span class="pf-label" style="margin-bottom:0.25rem;">
+                Module @module.DisplayOrder &nbsp;·&nbsp; @module.Type
+              </span>
+              <h3 class="pf-card-title" style="font-size:1.1rem;">@module.Title</h3>
+              @if (!string.IsNullOrEmpty(module.Description))
+              {
+                <p class="pf-body-cell" style="margin-top:0.25rem; opacity:0.7;">
+                  @module.Description
+                </p>
+              }
+            </div>
+            <div style="text-align:right; flex-shrink:0; padding-left:1rem;">
+              <span class="pf-stat-cell__number" style="font-size:1.25rem;">
+                @module.Materials.Count
+              </span>
+              <span class="pf-stat-cell__label">Resources</span>
+            </div>
+          </div>
+
+          @* Materials for enrolled students *@
+          @if (isEnrolled || isOwner || userRole == "Admin")
+          {
+            @if (module.Materials.Any())
+            {
+              <div style="border-top:var(--border-inner); margin-top:1rem; padding-top:0.75rem;">
+                <ul style="list-style:none; display:flex; flex-direction:column; gap:0.4rem;">
+                  @foreach (var mat in module.Materials)
+                  {
+                    <li style="display:flex; align-items:center; gap:0.75rem;">
+                      <span class="pf-label" style="min-width:70px;">@mat.Type</span>
+                      <a href="@mat.FileUrl" target="_blank" class="pf-body-cell"
+                         style="color:var(--dark); text-decoration:none; border-bottom:1px solid var(--red);">
+                        @mat.Title
+                      </a>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          }
+          else
+          {
+            <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.5;">
+              Enrol to access resources
+            </p>
+          }
+        </div>
+      }
+    </div>
+  }
+
 </div>

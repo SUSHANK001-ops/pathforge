@@ -1,46 +1,104 @@
+@model IEnumerable<PathForge.Models.Entities.Course>
 @{
-    ViewData["Title"] = "Courses";
+    ViewData["Title"] = "Course Catalogue";
+    Layout = "_Layout";
 }
 
-<div class="pf-page py-12">
-    <div class="flex flex-wrap justify-between items-end mb-8 border-b-[3px] border-[var(--dark)] pb-4">
-        <div>
-            <span class="pf-label mb-2">EXPLORE LEARNING PATHS</span>
-            <h1 class="pf-section-header">All Constellations</h1>
-        </div>
-        <div>
-            <a href="/Course/Create" class="pf-btn pf-btn--sm">+ Create Course</a>
-        </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  @* Header *@
+  <div style="display:flex; align-items:flex-start; justify-content:space-between;
+              border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2.5rem;
+              flex-wrap:wrap; gap:1rem;">
+    <div>
+      <span class="pf-label">All Courses</span>
+      <h1 class="pf-section-header" style="margin-top:0.4rem;">Course Catalogue</h1>
     </div>
 
-    <!-- Courses Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="pf-course-card">
-            <span class="pf-course-card__category">Computer Science</span>
-            <h3 class="pf-course-card__title">ASP.NET Core Architecture</h3>
-            <p class="pf-body-cell">
-                Full lifecycle web applications, session pipelines, and enterprise software engineering.
-            </p>
-            <div class="pf-course-card__meta">
-                <span>12 Modules &middot; 4 Assignments</span>
-            </div>
-            <div class="pf-course-card__actions">
-                <a href="/Course/Details/1" class="pf-btn pf-btn--sm">View Course</a>
-            </div>
-        </div>
+    @* Search form *@
+    <form method="get" asp-action="Index" style="display:flex; gap:0.5rem; align-items:flex-end;">
+      <div>
+        <label class="pf-form-label">Search</label>
+        <input type="text" name="search" value="@ViewBag.Search"
+               class="pf-input" style="min-width:220px;" placeholder="Course title..." />
+      </div>
+      <button type="submit" class="pf-btn">Search</button>
+      @if (!string.IsNullOrEmpty(ViewBag.Search?.ToString()))
+      {
+        <a href="/Course" class="pf-btn pf-btn--ghost">Clear</a>
+      }
+    </form>
+  </div>
 
-        <div class="pf-course-card">
-            <span class="pf-course-card__category">Database Systems</span>
-            <h3 class="pf-course-card__title">EF Core & Relational Design</h3>
-            <p class="pf-body-cell">
-                Data modeling, foreign key cascade constraints, schema migrations, and high-performance querying.
-            </p>
-            <div class="pf-course-card__meta">
-                <span>8 Modules &middot; 2 Quizzes</span>
-            </div>
-            <div class="pf-course-card__actions">
-                <a href="/Course/Details/2" class="pf-btn pf-btn--sm">View Course</a>
-            </div>
-        </div>
+  @* Category filter pills *@
+  @if (ViewBag.Categories != null)
+  {
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:2rem;">
+      <a href="/Course" class="pf-status @(ViewBag.CurrentCategory == null ? "pf-status--live" : "pf-status--draft")"
+         style="text-decoration:none; padding:0.3rem 0.75rem; cursor:pointer;">
+        All
+      </a>
+      @foreach (string cat in ViewBag.Categories)
+      {
+        <a href="/Course?category=@cat"
+           class="pf-status @(ViewBag.CurrentCategory == cat ? "pf-status--live" : "pf-status--draft")"
+           style="text-decoration:none; padding:0.3rem 0.75rem; cursor:pointer;">
+          @cat
+        </a>
+      }
     </div>
+  }
+
+  @* Course grid *@
+  @if (!Model.Any())
+  {
+    <div class="pf-card pf-card--outlined" style="padding:2rem;">
+      <p class="pf-body">No courses found. Try a different search or category.</p>
+    </div>
+  }
+  else
+  {
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1.5rem;">
+      @foreach (var course in Model)
+      {
+        <div class="pf-course-card">
+          @if (!string.IsNullOrEmpty(course.ThumbnailUrl))
+          {
+            <img src="@course.ThumbnailUrl" alt="@course.Title"
+                 style="width:100%; height:160px; object-fit:cover; border-bottom:var(--border-inner);" />
+          }
+          else
+          {
+            @* Placeholder block in light background *@
+            <div style="width:100%; height:120px; background:var(--light);
+                        border-bottom:var(--border-inner);
+                        display:flex; align-items:center; justify-content:center;">
+              <span class="pf-label">@course.Category</span>
+            </div>
+          }
+
+          <div style="padding:1rem 1.25rem;">
+            <span class="pf-course-card__category">@course.Category</span>
+            <h2 class="pf-course-card__title" style="margin-top:0.35rem;">@course.Title</h2>
+            <p class="pf-body-cell" style="margin-top:0.5rem; opacity:0.65;
+               overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
+              @course.Description
+            </p>
+
+            <div class="pf-course-card__meta" style="margin-top:0.75rem;">
+              @course.Enrolments.Count enrolled
+              &nbsp;·&nbsp; By @course.Educator.FullName
+            </div>
+
+            <div class="pf-course-card__actions">
+              <a asp-action="Details" asp-route-id="@course.Id" class="pf-btn pf-btn--sm">
+                View Course
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
 </div>

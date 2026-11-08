@@ -1,32 +1,60 @@
 @model PathForge.Models.ViewModels.CourseViewModel
 @{
     ViewData["Title"] = "Create Course";
+    Layout = "_Layout";
 }
 
-<div class="pf-page flex justify-center py-12">
-    <div class="pf-form-panel">
-        <div class="pf-form-panel__header">
-            <span class="pf-label">EDUCATOR STUDIO</span>
-            <h2 class="pf-section-header">Create Constellation</h2>
-        </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
 
-        <form asp-action="Create" method="post">
-            <div class="pf-form-group">
-                <label asp-for="Title" class="pf-form-label">Course Title</label>
-                <input asp-for="Title" class="pf-input" placeholder="e.g. Distributed Systems 101" />
-            </div>
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <span class="pf-label">Educator Studio</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">Create Course</h1>
+  </div>
 
-            <div class="pf-form-group">
-                <label asp-for="Category" class="pf-form-label">Category</label>
-                <input asp-for="Category" class="pf-input" placeholder="e.g. Computer Science" />
-            </div>
+  <div class="pf-form-panel" style="max-width:640px;">
 
-            <div class="pf-form-group">
-                <label asp-for="Description" class="pf-form-label">Description</label>
-                <textarea asp-for="Description" class="pf-input pf-textarea" placeholder="Outline the learning path..."></textarea>
-            </div>
+    @if (!ViewData.ModelState.IsValid)
+    {
+      <div class="pf-alert pf-alert--error" style="margin-bottom:1.25rem;">
+        <div asp-validation-summary="All"></div>
+      </div>
+    }
 
-            <button type="submit" class="pf-btn w-full text-center">Save Constellation</button>
-        </form>
-    </div>
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+      @Html.AntiForgeryToken()
+
+      <div class="pf-form-group">
+        <label asp-for="Title" class="pf-form-label">Course Title</label>
+        <input asp-for="Title" class="pf-input" placeholder="e.g. Distributed Systems 101" />
+        <span asp-validation-for="Title" class="pf-field-error"></span>
+      </div>
+
+      <div class="pf-form-group">
+        <label asp-for="Category" class="pf-form-label">Category</label>
+        <input asp-for="Category" class="pf-input" placeholder="e.g. Computer Science" />
+        <span asp-validation-for="Category" class="pf-field-error"></span>
+      </div>
+
+      <div class="pf-form-group">
+        <label asp-for="Description" class="pf-form-label">Description</label>
+        <textarea asp-for="Description" class="pf-input pf-textarea"
+                  placeholder="Outline the learning path..."></textarea>
+        <span asp-validation-for="Description" class="pf-field-error"></span>
+      </div>
+
+      <div class="pf-form-group">
+        <label asp-for="ThumbnailFile" class="pf-form-label">Thumbnail (optional)</label>
+        <input asp-for="ThumbnailFile" class="pf-input" type="file" accept="image/*" />
+      </div>
+
+      <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+        <button type="submit" class="pf-btn">Create Course</button>
+        <a asp-action="Manage" class="pf-btn pf-btn--ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
 </div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

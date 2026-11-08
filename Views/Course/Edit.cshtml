@@ -1,34 +1,70 @@
 @model PathForge.Models.ViewModels.CourseViewModel
 @{
     ViewData["Title"] = "Edit Course";
+    Layout = "_Layout";
 }
 
-<div class="pf-page flex justify-center py-12">
-    <div class="pf-form-panel">
-        <div class="pf-form-panel__header">
-            <span class="pf-label">EDUCATOR STUDIO</span>
-            <h2 class="pf-section-header">Edit Course</h2>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <span class="pf-label">Educator Studio</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">Edit Course</h1>
+  </div>
+
+  <div class="pf-form-panel" style="max-width:640px;">
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+      <div class="pf-alert pf-alert--error" style="margin-bottom:1.25rem;">
+        <div asp-validation-summary="All"></div>
+      </div>
+    }
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+      @Html.AntiForgeryToken()
+      <input type="hidden" asp-for="Id" />
+      <input type="hidden" asp-for="ExistingThumbnailUrl" />
+
+      <div class="pf-form-group">
+        <label asp-for="Title" class="pf-form-label">Course Title</label>
+        <input asp-for="Title" class="pf-input" />
+        <span asp-validation-for="Title" class="pf-field-error"></span>
+      </div>
+
+      <div class="pf-form-group">
+        <label asp-for="Category" class="pf-form-label">Category</label>
+        <input asp-for="Category" class="pf-input" />
+        <span asp-validation-for="Category" class="pf-field-error"></span>
+      </div>
+
+      <div class="pf-form-group">
+        <label asp-for="Description" class="pf-form-label">Description</label>
+        <textarea asp-for="Description" class="pf-input pf-textarea"></textarea>
+        <span asp-validation-for="Description" class="pf-field-error"></span>
+      </div>
+
+      @if (!string.IsNullOrEmpty(Model.ExistingThumbnailUrl))
+      {
+        <div class="pf-form-group">
+          <label class="pf-form-label">Current Thumbnail</label>
+          <img src="@Model.ExistingThumbnailUrl" alt="thumbnail"
+               style="max-width:200px; border:var(--border-inner);" />
         </div>
+      }
 
-        <form asp-action="Edit" method="post">
-            <input type="hidden" asp-for="Id" />
+      <div class="pf-form-group">
+        <label asp-for="ThumbnailFile" class="pf-form-label">Replace Thumbnail (optional)</label>
+        <input asp-for="ThumbnailFile" class="pf-input" type="file" accept="image/*" />
+      </div>
 
-            <div class="pf-form-group">
-                <label asp-for="Title" class="pf-form-label">Course Title</label>
-                <input asp-for="Title" class="pf-input" />
-            </div>
-
-            <div class="pf-form-group">
-                <label asp-for="Category" class="pf-form-label">Category</label>
-                <input asp-for="Category" class="pf-input" />
-            </div>
-
-            <div class="pf-form-group">
-                <label asp-for="Description" class="pf-form-label">Description</label>
-                <textarea asp-for="Description" class="pf-input pf-textarea"></textarea>
-            </div>
-
-            <button type="submit" class="pf-btn w-full text-center">Update Course</button>
-        </form>
-    </div>
+      <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
+        <button type="submit" class="pf-btn">Update Course</button>
+        <a asp-action="Manage" class="pf-btn pf-btn--ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
 </div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

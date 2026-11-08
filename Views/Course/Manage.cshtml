@@ -1,0 +1,97 @@
+@model IEnumerable<PathForge.Models.Entities.Course>
+@{
+    ViewData["Title"] = "Manage Courses";
+    Layout = "_Layout";
+}
+
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  <div style="display:flex; justify-content:space-between; align-items:flex-start;
+              border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <div>
+      <span class="pf-label">Educator Portal</span>
+      <h1 class="pf-section-header" style="margin-top:0.4rem;">My Courses</h1>
+    </div>
+    <a asp-action="Create" class="pf-btn">+ New Course</a>
+  </div>
+
+  @if (TempData["Success"] != null)
+  {
+    <div class="pf-alert pf-alert--success" style="margin-bottom:1.5rem;">@TempData["Success"]</div>
+  }
+
+  <div class="pf-table-wrap">
+    <table class="pf-table">
+      <thead>
+        <tr>
+          <th>Course Title</th>
+          <th>Category</th>
+          <th>Enrolled</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var course in Model)
+        {
+          @* Ungraded submissions badge (Phase 5 Option A) *@
+          var ungraded = course.Assignments
+              .SelectMany(a => a.Submissions)
+              .Count(s => s.Status == "Submitted" || s.Status == "Late");
+
+          <tr>
+            <td>
+              <a asp-action="Details" asp-route-id="@course.Id"
+                 style="color:var(--dark); border-bottom:1px solid var(--red);">
+                @course.Title
+              </a>
+            </td>
+            <td>@course.Category</td>
+            <td class="cell-number">@course.Enrolments.Count</td>
+            <td><span class="pf-status pf-status--@course.Status.ToLower()">@course.Status</span></td>
+            <td>
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center;">
+                @if (ungraded > 0)
+                {
+                  <span class="pf-status pf-status--live" title="Submissions awaiting grading">
+                    @ungraded new
+                  </span>
+                }
+
+                <a asp-action="EditModules" asp-route-id="@course.Id"
+                   class="pf-btn pf-btn--ghost pf-btn--sm">Modules</a>
+
+                @if (course.Status == "Draft")
+                {
+                  <form asp-action="SetStatus" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id"     value="@course.Id" />
+                    <input type="hidden" name="status" value="Live" />
+                    <button type="submit" class="pf-btn pf-btn--sm">Publish</button>
+                  </form>
+                }
+                else if (course.Status == "Live")
+                {
+                  <form asp-action="SetStatus" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id"     value="@course.Id" />
+                    <input type="hidden" name="status" value="Draft" />
+                    <button type="submit" class="pf-btn pf-btn--ghost pf-btn--sm">Unpublish</button>
+                  </form>
+                }
+
+                <form asp-action="Delete" method="post" style="display:inline;">
+                  @Html.AntiForgeryToken()
+                  <input type="hidden" name="id" value="@course.Id" />
+                  <button type="submit" class="pf-btn pf-btn--danger pf-btn--sm"
+                          onclick="return confirm('Delete @course.Title?')">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+</div>

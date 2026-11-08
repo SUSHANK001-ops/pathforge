@@ -1,0 +1,165 @@
+@model PathForge.Models.Entities.Course
+@{
+    ViewData["Title"] = "Manage Modules — " + Model.Title;
+    Layout = "_Layout";
+}
+
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <span class="pf-label">Course Editor</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">@Model.Title</h1>
+    <div style="display:flex; gap:0.75rem; margin-top:1rem; flex-wrap:wrap;">
+      <a asp-action="Details" asp-route-id="@Model.Id" class="pf-btn pf-btn--ghost pf-btn--sm">
+        Preview
+      </a>
+      <a asp-action="Edit" asp-route-id="@Model.Id" class="pf-btn pf-btn--ghost pf-btn--sm">
+        Edit Details
+      </a>
+      <a asp-controller="Quiz" asp-action="Create" asp-route-courseId="@Model.Id"
+         class="pf-btn pf-btn--ghost pf-btn--sm">+ Quiz</a>
+      <a asp-controller="Assignment" asp-action="Create" asp-route-courseId="@Model.Id"
+         class="pf-btn pf-btn--ghost pf-btn--sm">+ Assignment</a>
+      <a asp-action="Manage" class="pf-btn pf-btn--ghost pf-btn--sm">
+        ← All My Courses
+      </a>
+    </div>
+  </div>
+
+  @if (TempData["Success"] != null)
+  {
+    <div class="pf-alert pf-alert--success" style="margin-bottom:1.5rem;">@TempData["Success"]</div>
+  }
+  @if (TempData["Error"] != null)
+  {
+    <div class="pf-alert pf-alert--error" style="margin-bottom:1.5rem;">@TempData["Error"]</div>
+  }
+
+  <div style="display:grid; grid-template-columns:1fr 360px; gap:3rem; align-items:start;">
+
+    @* Module list *@
+    <div>
+      <h2 class="pf-card-title" style="margin-bottom:1.25rem;">
+        Modules (@Model.Modules.Count())
+      </h2>
+
+      @foreach (var module in Model.Modules)
+      {
+        <div class="pf-card pf-card--outlined" style="margin-bottom:1rem;">
+          <div style="display:flex; justify-content:space-between; align-items:start;">
+            <div>
+              <span class="pf-label">@module.Type · Order @module.DisplayOrder</span>
+              <h3 class="pf-card-title" style="font-size:1.05rem; margin-top:0.2rem;">
+                @module.Title
+              </h3>
+            </div>
+            <form asp-action="DeleteModule" method="post" style="margin:0;">
+              @Html.AntiForgeryToken()
+              <input type="hidden" name="moduleId" value="@module.Id" />
+              <button type="submit" class="pf-btn pf-btn--danger pf-btn--sm"
+                      onclick="return confirm('Delete this module?')">
+                Delete
+              </button>
+            </form>
+          </div>
+
+          @* Materials *@
+          @if (module.Materials.Any())
+          {
+            <div style="border-top:var(--border-inner); margin-top:0.75rem; padding-top:0.75rem;">
+              @foreach (var mat in module.Materials)
+              {
+                <div style="display:flex; align-items:center; gap:0.5rem; padding:0.25rem 0;">
+                  <span class="pf-label">@mat.Type</span>
+                  <span class="pf-body-cell">@mat.Title</span>
+                </div>
+              }
+            </div>
+          }
+
+          @* Upload material form *@
+          <details style="margin-top:0.75rem;">
+            <summary class="pf-label" style="cursor:pointer; user-select:none;">
+              + Add Resource
+            </summary>
+            <form asp-action="UploadMaterial" method="post" enctype="multipart/form-data"
+                  style="margin-top:0.75rem; padding-top:0.75rem; border-top:var(--border-inner);">
+              @Html.AntiForgeryToken()
+              <input type="hidden" name="ModuleId" value="@module.Id" />
+
+              <div class="pf-form-group">
+                <label class="pf-form-label">Resource Title</label>
+                <input type="text" name="Title" class="pf-input" required
+                       placeholder="e.g. Week 1 Slides" />
+              </div>
+              <div class="pf-form-group">
+                <label class="pf-form-label">Type</label>
+                <select name="Type" class="pf-input pf-select" id="mat-type-@module.Id"
+                        onchange="toggleLinkField(this, @module.Id)">
+                  <option value="Document">Document</option>
+                  <option value="Slide">Slide</option>
+                  <option value="Video">Video</option>
+                  <option value="Link">External Link</option>
+                </select>
+              </div>
+              <div class="pf-form-group" id="file-field-@module.Id">
+                <label class="pf-form-label">Upload File</label>
+                <input type="file" name="File" class="pf-input" />
+              </div>
+              <div class="pf-form-group" id="link-field-@module.Id" style="display:none;">
+                <label class="pf-form-label">URL</label>
+                <input type="url" name="LinkUrl" class="pf-input" placeholder="https://..." />
+              </div>
+              <button type="submit" class="pf-btn pf-btn--sm">Upload</button>
+            </form>
+          </details>
+        </div>
+      }
+    </div>
+
+    @* Add module panel *@
+    <div style="position:sticky; top:80px;">
+      <h2 class="pf-card-title" style="margin-bottom:1.25rem;">Add Module</h2>
+      <div class="pf-card pf-card--outlined">
+        <form asp-action="AddModule" method="post">
+          @Html.AntiForgeryToken()
+          <input type="hidden" name="CourseId" value="@Model.Id" />
+
+          <div class="pf-form-group">
+            <label class="pf-form-label">Module Title</label>
+            <input type="text" name="Title" class="pf-input" required
+                   placeholder="e.g. Introduction to HTML" />
+          </div>
+          <div class="pf-form-group">
+            <label class="pf-form-label">Description (optional)</label>
+            <textarea name="Description" class="pf-input pf-textarea"
+                      style="min-height:80px;"></textarea>
+          </div>
+          <div class="pf-form-group">
+            <label class="pf-form-label">Type</label>
+            <select name="Type" class="pf-input pf-select">
+              <option value="Lesson">Lesson</option>
+              <option value="Video">Video</option>
+              <option value="Lab">Lab</option>
+              <option value="Reading">Reading</option>
+            </select>
+          </div>
+          <button type="submit" class="pf-btn" style="width:100%;">Add Module</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+@section Scripts {
+<script>
+function toggleLinkField(select, moduleId) {
+  var isLink     = select.value === 'Link';
+  var fileField  = document.getElementById('file-field-' + moduleId);
+  var linkField  = document.getElementById('link-field-' + moduleId);
+  if (fileField) fileField.style.display = isLink ? 'none' : '';
+  if (linkField) linkField.style.display = isLink ? '' : 'none';
+}
+</script>
+}
