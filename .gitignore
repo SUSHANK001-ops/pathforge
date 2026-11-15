@@ -37,3 +37,8 @@ Thumbs.db
 
 # User-uploaded content (materials, submissions, thumbnails)
 wwwroot/uploads/
+
+# SQLite local database files
+*.db
+*.db-shm
+*.db-wal

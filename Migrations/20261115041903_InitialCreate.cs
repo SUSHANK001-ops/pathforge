@@ -15,16 +15,16 @@ namespace PathForge.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FullName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    PasswordHash = table.Column<string>(type: "TEXT", nullable: false),
+                    Role = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    ProfilePicture = table.Column<string>(type: "TEXT", nullable: true),
+                    Bio = table.Column<string>(type: "TEXT", nullable: true),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -35,13 +35,13 @@ namespace PathForge.Migrations
                 name: "ChatMessages",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    MessageText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    SentAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SenderId = table.Column<int>(type: "int", nullable: false),
-                    ReceiverId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    MessageText = table.Column<string>(type: "TEXT", nullable: false),
+                    IsRead = table.Column<bool>(type: "INTEGER", nullable: false),
+                    SentAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    SenderId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ReceiverId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,16 +64,16 @@ namespace PathForge.Migrations
                 name: "Courses",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Category = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    ThumbnailUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EducatorId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    Category = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Status = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    ThumbnailUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    EducatorId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -90,14 +90,14 @@ namespace PathForge.Migrations
                 name: "Assignments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    MaxMarks = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    MaxMarks = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CourseId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,11 +114,11 @@ namespace PathForge.Migrations
                 name: "CourseEnrolments",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EnrolledAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    EnrolledAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CourseId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,15 +141,15 @@ namespace PathForge.Migrations
                 name: "DiscussionPosts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsFlagged = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ParentPostId = table.Column<int>(type: "int", nullable: true),
-                    CourseId = table.Column<int>(type: "int", nullable: false),
-                    AuthorId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false),
+                    Body = table.Column<string>(type: "TEXT", nullable: false),
+                    IsFlagged = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ParentPostId = table.Column<int>(type: "INTEGER", nullable: true),
+                    CourseId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AuthorId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -178,13 +178,13 @@ namespace PathForge.Migrations
                 name: "Modules",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Type = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    CourseId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -201,14 +201,14 @@ namespace PathForge.Migrations
                 name: "Quizzes",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TimeLimitMinutes = table.Column<int>(type: "int", nullable: false),
-                    PassMarkPercent = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    TimeLimitMinutes = table.Column<int>(type: "INTEGER", nullable: false),
+                    PassMarkPercent = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CourseId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -225,17 +225,17 @@ namespace PathForge.Migrations
                 name: "AssignmentSubmissions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    MarksAwarded = table.Column<int>(type: "int", nullable: true),
-                    GraderFeedback = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SubmittedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    GradedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AssignmentId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    FileUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    Comment = table.Column<string>(type: "TEXT", nullable: true),
+                    Status = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    MarksAwarded = table.Column<int>(type: "INTEGER", nullable: true),
+                    GraderFeedback = table.Column<string>(type: "TEXT", nullable: true),
+                    SubmittedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    GradedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    AssignmentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -258,14 +258,14 @@ namespace PathForge.Migrations
                 name: "Materials",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
-                    FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileSizeBytes = table.Column<long>(type: "bigint", nullable: false),
-                    UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModuleId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Type = table.Column<string>(type: "TEXT", maxLength: 30, nullable: false),
+                    FileUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    FileSizeBytes = table.Column<long>(type: "INTEGER", nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ModuleId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -282,14 +282,14 @@ namespace PathForge.Migrations
                 name: "StudentProgress",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    StartedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CompletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: false),
-                    ModuleId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Status = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
+                    StartedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CompletedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false),
+                    ModuleId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -312,15 +312,15 @@ namespace PathForge.Migrations
                 name: "QuizAttempts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ScorePercent = table.Column<int>(type: "int", nullable: false),
-                    CorrectAnswers = table.Column<int>(type: "int", nullable: false),
-                    TotalQuestions = table.Column<int>(type: "int", nullable: false),
-                    Passed = table.Column<bool>(type: "bit", nullable: false),
-                    AttemptedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    QuizId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ScorePercent = table.Column<int>(type: "INTEGER", nullable: false),
+                    CorrectAnswers = table.Column<int>(type: "INTEGER", nullable: false),
+                    TotalQuestions = table.Column<int>(type: "INTEGER", nullable: false),
+                    Passed = table.Column<bool>(type: "INTEGER", nullable: false),
+                    AttemptedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    QuizId = table.Column<int>(type: "INTEGER", nullable: false),
+                    StudentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -343,12 +343,12 @@ namespace PathForge.Migrations
                 name: "QuizQuestions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Marks = table.Column<int>(type: "int", nullable: false),
-                    DisplayOrder = table.Column<int>(type: "int", nullable: false),
-                    QuizId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    QuestionText = table.Column<string>(type: "TEXT", nullable: false),
+                    Marks = table.Column<int>(type: "INTEGER", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false),
+                    QuizId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -365,11 +365,11 @@ namespace PathForge.Migrations
                 name: "QuizOptions",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OptionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsCorrect = table.Column<bool>(type: "bit", nullable: false),
-                    QuestionId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    OptionText = table.Column<string>(type: "TEXT", nullable: false),
+                    IsCorrect = table.Column<bool>(type: "INTEGER", nullable: false),
+                    QuestionId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
