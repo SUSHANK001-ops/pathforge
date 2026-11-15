@@ -1,15 +1,15 @@
 @{
     ViewData["Title"] = "PathForge — Forge Your Path to Mastery";
     Layout = "_Layout";
+    bool isLoggedIn = ViewBag.IsLoggedIn == true;
+    string role = ViewBag.UserRole ?? "";
 }
 
-@* ── HERO SECTION ──────────────────────────────────────── *@
-<section class="pf-page" style="padding-top:5rem; padding-bottom:4rem;">
-  <div>
-    @* Eyebrow label — Space Grotesk uppercase red *@
+@* ── HERO ─────────────────────────────────────────────── *@
+<section class="pf-page" style="padding-top:5rem; padding-bottom:3.5rem;">
+  <div style="max-width:720px;">
     <span class="pf-label">Web-Based Learning System</span>
 
-    @* Three-line Shrikhand hero (FRAME.md hero-title-stack) *@
     <div style="margin-top:1rem; margin-bottom:1.5rem;">
       <div class="pf-hero-title">Learning,</div>
       <div class="pf-hero-title-red">mapped</div>
@@ -18,18 +18,23 @@
       </div>
     </div>
 
-    @* Baskerville tagline *@
     <p class="pf-body" style="max-width:520px; margin-bottom:2rem;">
       Join courses, track your progress on a living skill map, and learn
       alongside educators who share resources, feedback, and discussion in real time.
     </p>
 
-    @* CTAs *@
     <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-      @if (ViewBag.IsLoggedIn == true)
+      @if (isLoggedIn)
       {
-        <a href="/Course" class="pf-btn">My Courses</a>
-        <a href="/Progress" class="pf-btn pf-btn--ghost">View Progress</a>
+        <a href="/Course" class="pf-btn">Browse Courses</a>
+        @if (role == "Student")
+        {
+          <a href="/Progress" class="pf-btn pf-btn--ghost">My Constellation</a>
+        }
+        else if (role == "Educator" || role == "Admin")
+        {
+          <a href="/Course/Manage" class="pf-btn pf-btn--ghost">Manage Courses</a>
+        }
       }
       else
       {
@@ -40,7 +45,7 @@
   </div>
 </section>
 
-@* ── STATS STRIP — fin-grid style ─────────────────────── *@
+@* ── STATS STRIP ──────────────────────────────────────── *@
 <section class="pf-section-light">
   <div class="pf-page" style="padding-top:2.5rem; padding-bottom:2.5rem;">
     <div class="pf-stat-grid">
@@ -49,8 +54,8 @@
         <span class="pf-stat-cell__label">User Roles</span>
       </div>
       <div class="pf-stat-cell">
-        <span class="pf-stat-cell__number">5</span>
-        <span class="pf-stat-cell__label">Core Modules</span>
+        <span class="pf-stat-cell__number">6</span>
+        <span class="pf-stat-cell__label">Core Features</span>
       </div>
       <div class="pf-stat-cell">
         <span class="pf-stat-cell__number">∞</span>
@@ -60,10 +65,117 @@
   </div>
 </section>
 
-@* ── TECH STACK LABELS ────────────────────────────────── *@
-<section class="pf-page" style="padding-top:2rem; padding-bottom:2rem;">
-  <div style="display:flex; gap:1rem; flex-wrap:wrap; border-bottom:var(--border-inner); padding-bottom:1.5rem;">
-    @foreach (var tech in new[]{"ASP.NET Core","SQL Server","HTML5 / CSS3","JavaScript","MVC Pattern"})
+@* ── HOW IT WORKS ─────────────────────────────────────── *@
+<section class="pf-page" style="padding-top:3.5rem; padding-bottom:1rem;">
+  <span class="pf-label">How It Works</span>
+  <h2 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
+    Three steps to mastery
+  </h2>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem;">
+    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
+      <span class="pf-cell-number">01</span>
+      <h3 class="pf-card-title" style="font-size:1.2rem; margin-top:0.5rem;">Enrol</h3>
+      <p class="pf-body-cell" style="margin-top:0.5rem; opacity:0.75;">
+        Browse the catalogue and join a learning constellation built by an educator.
+      </p>
+    </div>
+    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
+      <span class="pf-cell-number">02</span>
+      <h3 class="pf-card-title" style="font-size:1.2rem; margin-top:0.5rem;">Progress</h3>
+      <p class="pf-body-cell" style="margin-top:0.5rem; opacity:0.75;">
+        Work through modules, unlock the next node, and watch your star map light up.
+      </p>
+    </div>
+    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
+      <span class="pf-cell-number">03</span>
+      <h3 class="pf-card-title" style="font-size:1.2rem; margin-top:0.5rem;">Prove It</h3>
+      <p class="pf-body-cell" style="margin-top:0.5rem; opacity:0.75;">
+        Take quizzes, submit assignments, and get feedback from your educator.
+      </p>
+    </div>
+  </div>
+</section>
+
+@* ── FEATURES ─────────────────────────────────────────── *@
+<section class="pf-section-light" style="margin-top:3rem;">
+  <div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+    <span class="pf-label">What's Inside</span>
+    <h2 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
+      Everything a course needs
+    </h2>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem 2rem;">
+      @foreach (var f in new[]
+      {
+        ("Courses & Modules", "Educators build structured paths from lessons, videos, labs and readings."),
+        ("Materials", "Attach documents, slides, videos and external links to any module."),
+        ("Quizzes", "Timed, auto-scored assessments with instant pass/fail results."),
+        ("Assignments", "File submissions with grading, marks and written feedback."),
+        ("Discussions", "Threaded course forums so learners and educators can talk it through."),
+        ("Constellation", "A visual star map that tracks each learner's completion in real time.")
+      })
+      {
+        <div style="border-left:var(--border-leftbar); padding-left:1rem;">
+          <h3 class="pf-card-title" style="font-size:1.1rem;">@f.Item1</h3>
+          <p class="pf-body-cell" style="margin-top:0.35rem; opacity:0.75;">@f.Item2</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+@* ── ROLES ────────────────────────────────────────────── *@
+<section class="pf-page" style="padding-top:3.5rem; padding-bottom:2rem;">
+  <span class="pf-label">Built For Everyone</span>
+  <h2 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
+    One platform, three roles
+  </h2>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem;">
+    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
+      <span class="pf-status pf-status--draft">Student</span>
+      <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.8;">
+        Enrol, learn, submit work, take quizzes, and track progress on the constellation.
+      </p>
+    </div>
+    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
+      <span class="pf-status pf-status--live">Educator</span>
+      <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.8;">
+        Create and publish courses, upload materials, set quizzes and grade submissions.
+      </p>
+    </div>
+    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
+      <span class="pf-status pf-status--archived">Admin</span>
+      <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.8;">
+        Oversee the platform — manage users, review courses and monitor activity.
+      </p>
+    </div>
+  </div>
+</section>
+
+@* ── CTA ──────────────────────────────────────────────── *@
+@if (!isLoggedIn)
+{
+  <section class="pf-section-dark">
+    <div class="pf-page" style="padding-top:3rem; padding-bottom:3rem; text-align:center;">
+      <h2 class="pf-section-header" style="color:var(--bg);">Ready to forge your path?</h2>
+      <p class="pf-body" style="color:var(--light); max-width:520px; margin:0.75rem auto 1.75rem;">
+        Create a free account and start your first constellation today.
+      </p>
+      <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+        <a href="/Auth/Register" class="pf-btn">Create Account</a>
+        <a href="/Auth/Login" class="pf-btn pf-btn--ghost" style="color:var(--bg); border-color:var(--bg);">Log In</a>
+      </div>
+    </div>
+  </section>
+}
+
+@* ── TECH STACK ───────────────────────────────────────── *@
+<section class="pf-page" style="padding-top:2rem; padding-bottom:2.5rem;">
+  <div style="display:flex; gap:1rem; flex-wrap:wrap; border-top:var(--border-inner); padding-top:1.5rem;">
+    <span class="pf-label" style="align-self:center;">Built With</span>
+    @foreach (var tech in new[]{"ASP.NET Core MVC", "Entity Framework Core", "HTML5 / CSS3", "JavaScript", "Tailwind CSS"})
     {
       <span class="pf-status pf-status--draft" style="opacity:1; font-size:0.6rem; padding:0.2rem 0.6rem;">
         @tech

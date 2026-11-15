@@ -42,3 +42,6 @@ wwwroot/uploads/
 *.db
 *.db-shm
 *.db-wal
+
+# Local run log
+run.log

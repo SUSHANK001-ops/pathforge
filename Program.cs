@@ -22,6 +22,13 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
+// Apply migrations and seed demo data on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<PathForgeDbContext>();
+    await PathForge.Data.DataSeeder.SeedAsync(db);
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
