@@ -48,8 +48,8 @@
           <div style="flex-shrink:0;">
             @if (role == "Student")
             {
-              @{ var mine = a.Submissions.FirstOrDefault(s => s.StudentId == userId); }
-              @if (mine == null)
+              var mine = a.Submissions.FirstOrDefault(s => s.StudentId == userId);
+              if (mine == null)
               {
                 <a asp-action="Submit" asp-route-id="@a.Id" class="pf-btn pf-btn--sm">Submit</a>
               }

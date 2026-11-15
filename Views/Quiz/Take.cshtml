@@ -21,7 +21,7 @@
     <div class="pf-alert pf-alert--success">
       You have already completed this quiz.
       <a asp-action="Result" asp-route-quizId="@Model.Id"
-         asp-route-studentId="@HttpContext.Session.GetString("UserId")"
+         asp-route-studentId="@Context.Session.GetString("UserId")"
          style="border-bottom:1px solid var(--dark);">View Result</a>
     </div>
   }

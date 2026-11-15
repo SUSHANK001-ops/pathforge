@@ -102,6 +102,19 @@
             int    radius      = status == "InProgress" ? 20 : 14;
             string pulseClass  = status == "InProgress" ? "star-pulse" : "";
 
+            // Glyph shown in the centre of the node
+            string centreGlyph = status == "Completed"  ? "★"
+                               : status == "InProgress" ? "✦"
+                               :                          module.DisplayOrder.ToString();
+            string glyphFill   = status == "Completed" ? "#FFFFFF"
+                               : status == "InProgress" ? "#F5F2EF"
+                               :                          "#FFFFFF";
+            int    glyphSize   = status == "Locked" ? 11 : 13;
+            string labelFill   = status == "Locked" ? "#C0B8B0" : "#1C1410";
+            string labelText   = module.Title.Length > 14
+                               ? module.Title.Substring(0, 13) + "…"
+                               : module.Title;
+
             <g class="constellation-node @pulseClass"
                data-status="@status"
                data-module-id="@module.Id">
@@ -118,35 +131,16 @@
               <circle cx="@cx" cy="@cy" r="@radius"
                       fill="@fillColor" stroke="@strokeColor" stroke-width="2" />
 
-              @* Star icon inside completed nodes *@
-              @if (status == "Completed")
-              {
-                <text x="@cx" y="@(cy + 5)" text-anchor="middle"
-                      font-size="13" fill="#FFFFFF">★</text>
-              }
-              @if (status == "InProgress")
-              {
-                <text x="@cx" y="@(cy + 5)" text-anchor="middle"
-                      font-size="13" fill="#F5F2EF">✦</text>
-              }
+              @* Centre glyph: star / spark / order number *@
+              <text x="@cx" y="@(cy + 5)" text-anchor="middle"
+                    font-size="@glyphSize" fill="@glyphFill" font-weight="600">@centreGlyph</text>
 
               @* Module label below *@
               <text x="@cx" y="@(cy + radius + 16)"
                     text-anchor="middle" font-size="10"
                     font-family="'Space Grotesk', sans-serif"
-                    fill="@(status == "Locked" ? "#C0B8B0" : "#1C1410")"
-                    font-weight="600">
-                @(module.Title.Length > 14 ? module.Title.Substring(0, 13) + "…" : module.Title)
-              </text>
-
-              @* Order number inside locked nodes *@
-              @if (status == "Locked")
-              {
-                <text x="@cx" y="@(cy + 5)" text-anchor="middle"
-                      font-size="11" fill="#FFFFFF" font-weight="600">
-                  @module.DisplayOrder
-                </text>
-              }
+                    fill="@labelFill"
+                    font-weight="600">@labelText</text>
             </g>
           }
         </svg>
