@@ -67,7 +67,8 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="id"     value="@course.Id" />
                     <input type="hidden" name="status" value="Live" />
-                    <button type="submit" class="pf-btn pf-btn--sm">Publish</button>
+                    <button type="submit" class="pf-btn pf-btn--sm"
+                            onclick="return confirm('Publish @course.Title? It will become visible in the public catalogue.')">Publish</button>
                   </form>
                 }
                 else if (course.Status == "Live")
@@ -76,7 +77,8 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="id"     value="@course.Id" />
                     <input type="hidden" name="status" value="Draft" />
-                    <button type="submit" class="pf-btn pf-btn--ghost pf-btn--sm">Unpublish</button>
+                    <button type="submit" class="pf-btn pf-btn--ghost pf-btn--sm"
+                            onclick="return confirm('Unpublish @course.Title? It will be hidden from the catalogue and students can no longer enrol.')">Unpublish</button>
                   </form>
                 }
 

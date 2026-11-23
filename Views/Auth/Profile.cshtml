@@ -72,8 +72,8 @@
         </div>
 
         <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
-          <button type="submit" class="pf-btn">Save Changes</button>
-          <a href="/" class="pf-btn pf-btn--ghost">Cancel</a>
+          <button type="submit" class="pf-btn" id="saveProfileBtn">Save Changes</button>
+          <a href="/Home/Dashboard" class="pf-btn pf-btn--ghost">Cancel</a>
         </div>
       </form>
     </div>
@@ -98,4 +98,19 @@
 
 @section Scripts {
   <partial name="_ValidationScriptsPartial" />
+  <script>
+    // Confirm before saving sensitive changes (password change in particular).
+    (function () {
+      var form = document.querySelector('form[action="/Auth/Profile"], form');
+      var pw   = document.getElementById('@Html.IdFor(m => m.NewPassword)');
+      if (!form) return;
+      form.addEventListener('submit', function (e) {
+        var changingPw = pw && pw.value && pw.value.length > 0;
+        var msg = changingPw
+          ? 'Change your password? You will need the new password next time you log in.'
+          : 'Save changes to your profile?';
+        if (!confirm(msg)) { e.preventDefault(); }
+      });
+    })();
+  </script>
 }

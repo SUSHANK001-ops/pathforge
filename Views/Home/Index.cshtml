@@ -29,15 +29,8 @@
       <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
         @if (isLoggedIn)
         {
-          <a href="/Course" class="pf-btn">Browse Courses</a>
-          @if (role == "Student")
-          {
-            <a href="/Progress" class="pf-btn pf-btn--ghost">My Constellation</a>
-          }
-          else if (role == "Educator" || role == "Admin")
-          {
-            <a href="/Course/Manage" class="pf-btn pf-btn--ghost">Manage Courses</a>
-          }
+          <a href="/Home/Dashboard" class="pf-btn">Go to Dashboard</a>
+          <a href="/Course" class="pf-btn pf-btn--ghost">Browse Courses</a>
         }
         else
         {

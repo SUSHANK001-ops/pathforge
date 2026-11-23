@@ -239,7 +239,7 @@ All passwords follow the pattern below.
 
 | Role | Email | Password |
 |---|---|---|
-| Admin | `admin@pathforge.test` | `Admin@123` |
+| Admin | `sushanka@pathforge.test` | `Admin@123` |
 | Educator | `maya@pathforge.test` | `Educator@123` |
 | Educator | `samuel@pathforge.test` | `Educator@123` |
 | Educator | `tara@pathforge.test` | `Educator@123` |
@@ -260,7 +260,24 @@ announcements; enrolments at varying completion; quiz attempts; and **one
 earned certificate** (Wei → UI Design Fundamentals).
 
 > `wei@pathforge.test` is the best account to demo certificates; any educator
-> account demos authoring; `admin@pathforge.test` demos the admin panel.
+> account demos authoring; `sushanka@pathforge.test` is the administrator.
+
+### Homepage vs Dashboard
+The marketing **homepage is always at `/`** (shown to everyone, logged in or
+not). Logged-in users reach their **role-aware dashboard** at `/Home/Dashboard`
+(also linked in the navbar and via the hero "Go to Dashboard" button). Login
+redirects students/educators to the dashboard and admins to `/Admin`.
+
+### Password strength
+Registration and password changes require a **strong password**: at least 8
+characters with an uppercase letter, a lowercase letter, a number, and a
+special character (validated client- and server-side). All seeded demo
+passwords meet this rule.
+
+### Confirmation on sensitive actions
+Destructive or high-impact actions prompt for confirmation before running:
+deleting a course/module/lab/announcement/post, suspending or reactivating a
+user, publishing/unpublishing a course, and changing your password.
 
 ---
 

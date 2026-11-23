@@ -18,6 +18,8 @@ namespace PathForge.Models.ViewModels
 
         [Required(ErrorMessage = "Password is required")]
         [MinLength(8, ErrorMessage = "Password must be at least 8 characters")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$",
+            ErrorMessage = "Password must be 8+ characters with an uppercase letter, a lowercase letter, a number and a special character")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
 

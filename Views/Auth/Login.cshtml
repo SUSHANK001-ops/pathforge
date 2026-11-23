@@ -6,7 +6,7 @@
 
 <section class="pf-section-light" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:3rem 1rem;">
 
-  <div class="pf-form-panel">
+  <div class="pf-form-panel" style="max-width:560px;">
 
     <div class="pf-form-panel__header">
       <span class="pf-label">PathForge</span>
@@ -55,10 +55,64 @@
       Don't have an account? <a asp-action="Register" asp-controller="Auth">Register</a>
     </p>
 
+    @* Demo / test accounts for graders and quick login *@
+    <details style="margin-top:1.5rem; border-top:var(--border-inner); padding-top:1rem;">
+      <summary class="pf-label" style="cursor:pointer; user-select:none;">
+        Demo Test Accounts (click to show)
+      </summary>
+      <p class="pf-body-cell" style="opacity:0.65; margin:0.6rem 0;">
+        Seeded accounts for testing. Click any email to fill the form.
+      </p>
+      <table class="pf-table" style="font-size:0.75rem;">
+        <thead><tr><th>Role</th><th>Email</th><th>Password</th></tr></thead>
+        <tbody>
+          @{
+            var demo = new (string Role, string Email)[]
+            {
+              ("Admin",    "sushanka@pathforge.test"),
+              ("Educator", "maya@pathforge.test"),
+              ("Educator", "samuel@pathforge.test"),
+              ("Educator", "tara@pathforge.test"),
+              ("Educator", "jon@pathforge.test"),
+              ("Student",  "priya@pathforge.test"),
+              ("Student",  "liam@pathforge.test"),
+              ("Student",  "noah@pathforge.test"),
+              ("Student",  "amara@pathforge.test"),
+              ("Student",  "wei@pathforge.test"),
+              ("Student",  "fatima@pathforge.test"),
+              ("Student",  "diego@pathforge.test"),
+            };
+            string PwFor(string r) => r == "Admin" ? "Admin@123" : (r == "Educator" ? "Educator@123" : "Student@123");
+          }
+          @foreach (var d in demo)
+          {
+            <tr>
+              <td>@d.Role</td>
+              <td>
+                <a href="#" class="demo-fill" data-email="@d.Email" data-pw="@PwFor(d.Role)"
+                   style="border-bottom:1px solid var(--red);">@d.Email</a>
+              </td>
+              <td>@PwFor(d.Role)</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </details>
+
   </div>
 
 </section>
 
 @section Scripts {
   <partial name="_ValidationScriptsPartial" />
+  <script>
+    // Click a demo email to auto-fill the login form.
+    document.querySelectorAll('.demo-fill').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('Email').value    = this.dataset.email;
+        document.getElementById('Password').value = this.dataset.pw;
+      });
+    });
+  </script>
 }

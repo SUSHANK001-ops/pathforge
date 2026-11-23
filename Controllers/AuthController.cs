@@ -93,7 +93,7 @@ namespace PathForge.Controllers
             if (user.Role == "Admin")
                 return RedirectToAction("Index", "Admin");
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Dashboard", "Home");
         }
 
         // ── GET /Auth/Logout ────────────────────────────────────────

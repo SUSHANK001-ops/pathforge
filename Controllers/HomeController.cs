@@ -18,18 +18,23 @@ namespace PathForge.Controllers
             _db = db;
         }
 
-        // Logged-out visitors see the marketing landing page;
-        // logged-in users get a role-aware dashboard.
-        public async Task<IActionResult> Index()
+        // Public marketing landing page. Logged-in users also see it,
+        // but with the hero buttons pointing at their dashboard.
+        public IActionResult Index()
         {
             string role = HttpContext.Session.GetString("UserRole") ?? "";
             ViewBag.IsLoggedIn = !string.IsNullOrEmpty(role);
             ViewBag.UserRole = role;
+            return View();
+        }
 
-            if (string.IsNullOrEmpty(role))
-                return View();
+        // Role-aware dashboard for logged-in users.
+        public async Task<IActionResult> Dashboard()
+        {
+            if (SessionHelper.RequireLogin(HttpContext, TempData))
+                return RedirectToAction("Login", "Auth");
 
-            return View("Dashboard", await BuildDashboardAsync());
+            return View(await BuildDashboardAsync());
         }
 
         private async Task<DashboardViewModel> BuildDashboardAsync()

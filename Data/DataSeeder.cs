@@ -22,8 +22,8 @@ namespace PathForge.Data
             // ── USERS ────────────────────────────────────────────────
             var admin = new User
             {
-                FullName = "Alex Rivera",
-                Email = "admin@pathforge.test",
+                FullName = "Sushanka Lamichhane",
+                Email = "sushanka@pathforge.test",
                 Role = "Admin",
                 PasswordHash = Hash("Admin@123"),
                 Bio = "Platform administrator for PathForge.",
@@ -211,11 +211,32 @@ namespace PathForge.Data
             dbCourse.Modules = new List<Module>
             {
                 new Module { Title = "Entities & Relationships", Type = "Reading", DisplayOrder = 1,
-                    Description = "ERDs, keys and cardinality." },
+                    Description = "ERDs, keys and cardinality.",
+                    Materials = new List<Material>
+                    {
+                        new Material { Title = "ERD Primer (PDF)", Type = "Document",
+                            FileUrl = "/uploads/materials/erd-primer.pdf", FileSizeBytes = 320000 },
+                        new Material { Title = "Normalization Guide", Type = "Link",
+                            FileUrl = "https://en.wikipedia.org/wiki/Database_normalization" }
+                    } },
                 new Module { Title = "Writing SELECT Queries", Type = "Lesson", DisplayOrder = 2,
-                    Description = "Filtering, sorting and aggregation." },
+                    Description = "Filtering, sorting and aggregation.",
+                    Materials = new List<Material>
+                    {
+                        new Material { Title = "SQL SELECT Cheatsheet", Type = "Slide",
+                            FileUrl = "/uploads/materials/select-cheatsheet.pdf", FileSizeBytes = 450000 }
+                    } },
                 new Module { Title = "Joins Deep Dive", Type = "Lesson", DisplayOrder = 3,
-                    Description = "Inner, left, right and self joins." }
+                    Description = "Inner, left, right and self joins.",
+                    Materials = new List<Material>
+                    {
+                        new Material { Title = "Visual Joins Explained", Type = "Video",
+                            FileUrl = "https://www.youtube.com/watch?v=9yeOJ0ZMUYw" }
+                    } },
+                new Module { Title = "Indexes & Performance", Type = "Lesson", DisplayOrder = 4,
+                    Description = "How indexes speed up queries and their trade-offs." },
+                new Module { Title = "Transactions & ACID", Type = "Reading", DisplayOrder = 5,
+                    Description = "Atomicity, consistency, isolation, durability." }
             };
 
             dbCourse.Assignments = new List<Assignment>
@@ -353,9 +374,19 @@ namespace PathForge.Data
                             FileUrl = "https://docs.python.org/3/tutorial/" }
                     } },
                 new Module { Title = "Working with pandas", Type = "Video", DisplayOrder = 2,
-                    Description = "DataFrames, filtering, grouping." },
+                    Description = "DataFrames, filtering, grouping.",
+                    Materials = new List<Material>
+                    {
+                        new Material { Title = "pandas 10-minute intro", Type = "Link",
+                            FileUrl = "https://pandas.pydata.org/docs/user_guide/10min.html" }
+                    } },
                 new Module { Title = "Plotting with matplotlib", Type = "Lesson", DisplayOrder = 3,
-                    Description = "Line, bar and scatter charts." },
+                    Description = "Line, bar and scatter charts.",
+                    Materials = new List<Material>
+                    {
+                        new Material { Title = "matplotlib Gallery", Type = "Link",
+                            FileUrl = "https://matplotlib.org/stable/gallery/index.html" }
+                    } },
                 new Module { Title = "Lab: Analyse a CSV", Type = "Lab", DisplayOrder = 4,
                     Description = "Mini analysis project in the browser.",
                     Lab = new VirtualLab
@@ -422,11 +453,38 @@ namespace PathForge.Data
             uxCourse.Modules = new List<Module>
             {
                 new Module { Title = "Visual Hierarchy", Type = "Reading", DisplayOrder = 1,
-                    Description = "Guiding the eye with size, weight and space." },
+                    Description = "Guiding the eye with size, weight and space.",
+                    Materials = new List<Material>
+                    {
+                        new Material { Title = "Hierarchy Examples", Type = "Link",
+                            FileUrl = "https://www.nngroup.com/articles/visual-hierarchy-ux-definition/" }
+                    } },
                 new Module { Title = "Colour & Contrast", Type = "Lesson", DisplayOrder = 2,
-                    Description = "Building accessible palettes." },
+                    Description = "Building accessible palettes.",
+                    Materials = new List<Material>
+                    {
+                        new Material { Title = "Contrast Checker", Type = "Link",
+                            FileUrl = "https://webaim.org/resources/contrastchecker/" }
+                    } },
                 new Module { Title = "Type Systems", Type = "Lesson", DisplayOrder = 3,
-                    Description = "Choosing and pairing typefaces." }
+                    Description = "Choosing and pairing typefaces." },
+                new Module { Title = "Spacing & Layout Grids", Type = "Lesson", DisplayOrder = 4,
+                    Description = "Rhythm, alignment and the 8-point grid." },
+                new Module { Title = "Design Critique Lab", Type = "Lab", DisplayOrder = 5,
+                    Description = "Rebuild a card component in the browser.",
+                    Lab = new VirtualLab
+                    {
+                        Title = "Design a Product Card",
+                        Instructions =
+                            "Build a clean product card.\n" +
+                            "1. Add a heading (<h2>) for the product name.\n" +
+                            "2. Use CSS to add padding and a visible border.\n" +
+                            "3. Make the price stand out with a distinct colour.",
+                        StarterHtml = "<div class=\"card\">\n  <h2>Product Name</h2>\n  <p class=\"price\">$29</p>\n</div>",
+                        StarterCss  = ".card { padding: 1rem; border: 2px solid #1c1410; }\n.price { color: #d8000f; font-weight: bold; }",
+                        StarterJs   = "// no JS needed for this one",
+                        ExpectedMarkers = "<h2\npadding\nborder\ncolor"
+                    } }
             };
 
             // ── COURSE 6: Archived course (Sam) ──────────────────────

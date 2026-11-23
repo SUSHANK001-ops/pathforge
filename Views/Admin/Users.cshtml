@@ -46,7 +46,8 @@
             <td>
               <form asp-action="SuspendUser" asp-route-id="@user.Id" method="post">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="pf-btn pf-btn--sm pf-btn--ghost">
+                <button type="submit" class="pf-btn pf-btn--sm pf-btn--ghost"
+                        onclick="return confirm('@(user.IsActive ? "Suspend" : "Reactivate") @user.FullName? @(user.IsActive ? "They will not be able to log in." : "")')">
                   @(user.IsActive ? "Suspend" : "Reactivate")
                 </button>
               </form>
