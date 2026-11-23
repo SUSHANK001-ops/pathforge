@@ -1,0 +1,91 @@
+@model PathForge.Models.ViewModels.VirtualLabViewModel
+@{
+    bool isEdit = Model.Id > 0;
+    ViewData["Title"] = (isEdit ? "Edit" : "New") + " Virtual Lab";
+    Layout = "_Layout";
+}
+
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  @* Breadcrumb *@
+  <nav class="pf-label" style="margin-bottom:0.75rem;" aria-label="Breadcrumb">
+    <a asp-controller="Course" asp-action="Manage" style="color:var(--red);">My Courses</a>
+    &nbsp;/&nbsp;
+    <a asp-controller="Course" asp-action="EditModules" asp-route-id="@Model.CourseId"
+       style="color:var(--red);">Modules</a>
+    &nbsp;/&nbsp; @(isEdit ? "Edit Lab" : "New Lab")
+  </nav>
+
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <span class="pf-label">Virtual Lab · Interactive Sandbox</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">
+      @(isEdit ? "Edit Virtual Lab" : "Create Virtual Lab")
+    </h1>
+    <p class="pf-body" style="margin-top:0.5rem; max-width:640px; opacity:0.75;">
+      Students get a live HTML/CSS/JS editor with a real-time preview. Define the brief,
+      the starter code, and the checks that must pass to complete the module.
+    </p>
+  </div>
+
+  <form asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.Id" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="ModuleId" />
+    <input type="hidden" asp-for="CourseId" />
+
+    <div asp-validation-summary="ModelOnly" class="pf-alert pf-alert--error"
+         style="margin-bottom:1.5rem;"></div>
+
+    <div class="pf-form-group">
+      <label class="pf-form-label" asp-for="Title">Lab Title</label>
+      <input class="pf-input" asp-for="Title" placeholder="e.g. Build a Responsive Card" />
+      <span asp-validation-for="Title" class="pf-field-error"></span>
+    </div>
+
+    <div class="pf-form-group">
+      <label class="pf-form-label" asp-for="Instructions">Instructions / Brief</label>
+      <textarea class="pf-input pf-textarea" asp-for="Instructions" rows="5"
+                placeholder="Describe the task. One instruction per line reads well."></textarea>
+      <span asp-validation-for="Instructions" class="pf-field-error"></span>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.5rem;">
+      <div class="pf-form-group">
+        <label class="pf-form-label" asp-for="StarterHtml">Starter HTML</label>
+        <textarea class="pf-input pf-textarea pf-code" asp-for="StarterHtml" rows="8"
+                  spellcheck="false"></textarea>
+      </div>
+      <div class="pf-form-group">
+        <label class="pf-form-label" asp-for="StarterCss">Starter CSS</label>
+        <textarea class="pf-input pf-textarea pf-code" asp-for="StarterCss" rows="8"
+                  spellcheck="false"></textarea>
+      </div>
+      <div class="pf-form-group">
+        <label class="pf-form-label" asp-for="StarterJs">Starter JavaScript</label>
+        <textarea class="pf-input pf-textarea pf-code" asp-for="StarterJs" rows="8"
+                  spellcheck="false"></textarea>
+      </div>
+    </div>
+
+    <div class="pf-form-group">
+      <label class="pf-form-label" asp-for="ExpectedMarkers">Expected Markers (one per line)</label>
+      <textarea class="pf-input pf-textarea pf-code" asp-for="ExpectedMarkers" rows="4"
+                spellcheck="false"
+                placeholder="&lt;h1&#10;flex&#10;addEventListener"></textarea>
+      <p class="pf-body-cell" style="margin-top:0.4rem; opacity:0.65;">
+        Each line is a case-insensitive text snippet the student's combined code must contain
+        to pass the check. Leave blank to let any code count as complete.
+      </p>
+    </div>
+
+    <div style="display:flex; gap:0.75rem; margin-top:1rem;">
+      <button type="submit" class="pf-btn">@(isEdit ? "Save Lab" : "Create Lab")</button>
+      <a asp-controller="Course" asp-action="EditModules" asp-route-id="@Model.CourseId"
+         class="pf-btn pf-btn--ghost">Cancel</a>
+    </div>
+  </form>
+</div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+}

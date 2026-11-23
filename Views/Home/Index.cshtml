@@ -6,90 +6,123 @@
 }
 
 @* ── HERO ─────────────────────────────────────────────── *@
-<section class="pf-page" style="padding-top:5rem; padding-bottom:3.5rem;">
-  <div style="max-width:720px;">
-    <span class="pf-label">Web-Based Learning System</span>
+<section class="pf-hero pf-page" style="padding-top:4.5rem; padding-bottom:4rem;">
+  <div class="pf-hero__grid">
 
-    <div style="margin-top:1rem; margin-bottom:1.5rem;">
-      <div class="pf-hero-title">Learning,</div>
-      <div class="pf-hero-title-red">mapped</div>
-      <div class="pf-hero-title" style="transform:rotate(2deg); display:inline-block;">
-        one step at a time.
+    <div>
+      <span class="pf-hero__badge">Web-Based Learning System</span>
+
+      <div style="margin-bottom:1.5rem;">
+        <div class="pf-hero-title">Learning,</div>
+        <div class="pf-hero-title-red">mapped</div>
+        <div class="pf-hero-title" style="transform:rotate(2deg); display:inline-block;">
+          one step at a time.
+        </div>
+      </div>
+
+      <p class="pf-body" style="max-width:500px; margin-bottom:2rem;">
+        Join courses, code in a live virtual lab, and track your progress on a
+        constellation that lights up as you learn — alongside educators who
+        share resources, feedback and discussion in real time.
+      </p>
+
+      <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+        @if (isLoggedIn)
+        {
+          <a href="/Course" class="pf-btn">Browse Courses</a>
+          @if (role == "Student")
+          {
+            <a href="/Progress" class="pf-btn pf-btn--ghost">My Constellation</a>
+          }
+          else if (role == "Educator" || role == "Admin")
+          {
+            <a href="/Course/Manage" class="pf-btn pf-btn--ghost">Manage Courses</a>
+          }
+        }
+        else
+        {
+          <a href="/Auth/Register" class="pf-btn">Start Learning</a>
+          <a href="/Course" class="pf-btn pf-btn--ghost">Browse Courses</a>
+        }
       </div>
     </div>
 
-    <p class="pf-body" style="max-width:520px; margin-bottom:2rem;">
-      Join courses, track your progress on a living skill map, and learn
-      alongside educators who share resources, feedback, and discussion in real time.
-    </p>
-
-    <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-      @if (isLoggedIn)
-      {
-        <a href="/Course" class="pf-btn">Browse Courses</a>
-        @if (role == "Student")
-        {
-          <a href="/Progress" class="pf-btn pf-btn--ghost">My Constellation</a>
-        }
-        else if (role == "Educator" || role == "Admin")
-        {
-          <a href="/Course/Manage" class="pf-btn pf-btn--ghost">Manage Courses</a>
-        }
-      }
-      else
-      {
-        <a href="/Auth/Register" class="pf-btn">Start Learning</a>
-        <a href="/Course" class="pf-btn pf-btn--ghost">Browse Courses</a>
-      }
+    @* Mini-constellation illustration *@
+    <div class="pf-hero__art" aria-hidden="true">
+      <span class="pf-label" style="margin-bottom:0.25rem;">Your Learning Path</span>
+      <div class="pf-hero__node">
+        <span class="pf-hero__dot pf-hero__dot--done"></span>
+        <span>Semantic HTML</span>
+        <span class="pf-hero__line"></span>
+      </div>
+      <div class="pf-hero__node">
+        <span class="pf-hero__dot pf-hero__dot--done"></span>
+        <span>CSS Layout</span>
+        <span class="pf-hero__line"></span>
+      </div>
+      <div class="pf-hero__node">
+        <span class="pf-hero__dot pf-hero__dot--now"></span>
+        <span>JavaScript Basics</span>
+        <span class="pf-hero__line"></span>
+      </div>
+      <div class="pf-hero__node">
+        <span class="pf-hero__dot"></span>
+        <span style="opacity:0.5;">Virtual Lab</span>
+      </div>
     </div>
+
   </div>
 </section>
 
 @* ── STATS STRIP ──────────────────────────────────────── *@
-<section class="pf-section-light">
+<section class="pf-section-dark">
   <div class="pf-page" style="padding-top:2.5rem; padding-bottom:2.5rem;">
-    <div class="pf-stat-grid">
-      <div class="pf-stat-cell">
-        <span class="pf-stat-cell__number">3</span>
-        <span class="pf-stat-cell__label">User Roles</span>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:2rem; text-align:center;">
+      <div>
+        <span class="pf-stat-big" style="font-size:clamp(2.5rem,6vw,4rem);">3</span>
+        <span class="pf-label" style="color:var(--light); opacity:0.7; margin-top:0.5rem;">User Roles</span>
       </div>
-      <div class="pf-stat-cell">
-        <span class="pf-stat-cell__number">6</span>
-        <span class="pf-stat-cell__label">Core Features</span>
+      <div>
+        <span class="pf-stat-big" style="font-size:clamp(2.5rem,6vw,4rem);">7</span>
+        <span class="pf-label" style="color:var(--light); opacity:0.7; margin-top:0.5rem;">Core Features</span>
       </div>
-      <div class="pf-stat-cell">
-        <span class="pf-stat-cell__number">∞</span>
-        <span class="pf-stat-cell__label">Learning Paths</span>
+      <div>
+        <span class="pf-stat-big" style="font-size:clamp(2.5rem,6vw,4rem);">1</span>
+        <span class="pf-label" style="color:var(--light); opacity:0.7; margin-top:0.5rem;">Live Virtual Lab</span>
+      </div>
+      <div>
+        <span class="pf-stat-big" style="font-size:clamp(2.5rem,6vw,4rem);">&infin;</span>
+        <span class="pf-label" style="color:var(--light); opacity:0.7; margin-top:0.5rem;">Learning Paths</span>
       </div>
     </div>
   </div>
 </section>
 
 @* ── HOW IT WORKS ─────────────────────────────────────── *@
-<section class="pf-page" style="padding-top:3.5rem; padding-bottom:1rem;">
-  <span class="pf-label">How It Works</span>
-  <h2 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
+<section class="pf-page" style="padding-top:4rem; padding-bottom:1rem;">
+  <span class="pf-label pf-eyebrow">How It Works</span>
+  <h2 class="pf-section-header" style="margin-top:0.6rem; margin-bottom:2rem;">
     Three steps to mastery
   </h2>
 
   <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem;">
-    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
-      <span class="pf-cell-number">01</span>
-      <h3 class="pf-card-title" style="font-size:1.2rem; margin-top:0.5rem;">Enrol</h3>
+    <div class="pf-step pf-lift">
+      <span class="pf-step__num">01</span>
+      <h3 class="pf-card-title" style="font-size:1.2rem; margin-top:0.75rem;">Enrol</h3>
       <p class="pf-body-cell" style="margin-top:0.5rem; opacity:0.75;">
         Browse the catalogue and join a learning constellation built by an educator.
       </p>
     </div>
-    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
-      <span class="pf-cell-number">02</span>
-      <h3 class="pf-card-title" style="font-size:1.2rem; margin-top:0.5rem;">Progress</h3>
+    <div class="pf-step pf-lift">
+      <span class="pf-step__num">02</span>
+      <h3 class="pf-card-title" style="font-size:1.2rem; margin-top:0.75rem;">Progress</h3>
       <p class="pf-body-cell" style="margin-top:0.5rem; opacity:0.75;">
-        Work through modules, unlock the next node, and watch your star map light up.
+        Work through modules, build in the lab, unlock the next node and watch your map light up.
       </p>
     </div>
-    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
-      <span class="pf-cell-number">03</span>
-      <h3 class="pf-card-title" style="font-size:1.2rem; margin-top:0.5rem;">Prove It</h3>
+    <div class="pf-step pf-lift">
+      <span class="pf-step__num">03</span>
+      <h3 class="pf-card-title" style="font-size:1.2rem; margin-top:0.75rem;">Prove It</h3>
       <p class="pf-body-cell" style="margin-top:0.5rem; opacity:0.75;">
         Take quizzes, submit assignments, and get feedback from your educator.
       </p>
@@ -98,58 +131,103 @@
 </section>
 
 @* ── FEATURES ─────────────────────────────────────────── *@
-<section class="pf-section-light" style="margin-top:3rem;">
-  <div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
-    <span class="pf-label">What's Inside</span>
-    <h2 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
+<section class="pf-section-light" style="margin-top:4rem;">
+  <div class="pf-page" style="padding-top:3.5rem; padding-bottom:3.5rem;">
+    <span class="pf-label pf-eyebrow">What's Inside</span>
+    <h2 class="pf-section-header" style="margin-top:0.6rem; margin-bottom:2.5rem;">
       Everything a course needs
     </h2>
 
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem 2rem;">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem;">
       @foreach (var f in new[]
       {
-        ("Courses & Modules", "Educators build structured paths from lessons, videos, labs and readings."),
-        ("Materials", "Attach documents, slides, videos and external links to any module."),
-        ("Quizzes", "Timed, auto-scored assessments with instant pass/fail results."),
-        ("Assignments", "File submissions with grading, marks and written feedback."),
-        ("Discussions", "Threaded course forums so learners and educators can talk it through."),
-        ("Constellation", "A visual star map that tracks each learner's completion in real time.")
+        ("◱", "Courses & Modules", "Educators build structured paths from lessons, videos, labs and readings."),
+        ("▶", "Virtual Lab", "An in-browser HTML/CSS/JS sandbox with live preview and automated checks."),
+        ("◆", "Materials", "Attach documents, slides, videos and external links to any module."),
+        ("✓", "Quizzes", "Timed, auto-scored assessments with instant pass/fail results."),
+        ("✎", "Assignments", "File submissions with grading, marks and written feedback."),
+        ("✦", "Constellation", "A visual star map that tracks each learner's completion in real time.")
       })
       {
-        <div style="border-left:var(--border-leftbar); padding-left:1rem;">
-          <h3 class="pf-card-title" style="font-size:1.1rem;">@f.Item1</h3>
-          <p class="pf-body-cell" style="margin-top:0.35rem; opacity:0.75;">@f.Item2</p>
+        <div class="pf-feature pf-lift">
+          <span class="pf-feature__ico">@f.Item1</span>
+          <h3 class="pf-card-title" style="font-size:1.15rem;">@f.Item2</h3>
+          <p class="pf-body-cell" style="opacity:0.75;">@f.Item3</p>
         </div>
       }
     </div>
   </div>
 </section>
 
-@* ── ROLES ────────────────────────────────────────────── *@
-<section class="pf-page" style="padding-top:3.5rem; padding-bottom:2rem;">
-  <span class="pf-label">Built For Everyone</span>
-  <h2 class="pf-section-header" style="margin-top:0.4rem; margin-bottom:2rem;">
-    One platform, three roles
-  </h2>
+@* ── VIRTUAL LAB SPOTLIGHT ─────────────────────────────── *@
+<section class="pf-page" style="padding-top:4rem; padding-bottom:3rem;">
+  <div class="pf-split2">
+    <div>
+      <span class="pf-label pf-eyebrow">New · Hands-On</span>
+      <h2 class="pf-section-header" style="margin-top:0.6rem; margin-bottom:1rem;">
+        Learn by building in the Virtual Lab
+      </h2>
+      <p class="pf-body" style="margin-bottom:1.25rem;">
+        Write HTML, CSS and JavaScript in a split editor and see the result render
+        live, right beside your code. When your work passes the educator's checks,
+        the module completes itself and the next node unlocks.
+      </p>
+      <ul class="pf-bullets">
+        <li>Live preview as you type — no setup, no install</li>
+        <li>Automated checks mark the module complete</li>
+        <li>Your code is saved and picks up where you left off</li>
+      </ul>
+      <a href="/Course" class="pf-btn" style="margin-top:0.5rem;">Try a Lab</a>
+    </div>
 
-  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem;">
-    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
-      <span class="pf-status pf-status--draft">Student</span>
-      <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.8;">
-        Enrol, learn, submit work, take quizzes, and track progress on the constellation.
-      </p>
+    @* Faux editor panel *@
+    <div class="pf-card--outlined" style="border:var(--border-outer); border-left:var(--border-leftbar); background:var(--dark); padding:0; overflow:hidden;">
+      <div style="display:flex; gap:0.4rem; padding:0.6rem 0.9rem; border-bottom:1px solid #f5f2ef1f;">
+        <span style="width:10px;height:10px;border:1.5px solid var(--red);display:inline-block;"></span>
+        <span style="width:10px;height:10px;border:1.5px solid var(--light);opacity:0.4;display:inline-block;"></span>
+        <span style="width:10px;height:10px;border:1.5px solid var(--light);opacity:0.4;display:inline-block;"></span>
+        <span class="pf-label" style="color:var(--light);opacity:0.5;margin-left:auto;">lab · index.html</span>
+      </div>
+      <pre style="font-family:var(--font-mono,monospace); font-size:0.8rem; line-height:1.6; color:var(--light); padding:1.1rem 1.25rem; margin:0; white-space:pre-wrap;"><span style="color:var(--red);">&lt;h1&gt;</span>Hello, PathForge<span style="color:var(--red);">&lt;/h1&gt;</span>
+<span style="color:var(--red);">&lt;button</span> id=<span style="opacity:0.8;">"cta"</span><span style="color:var(--red);">&gt;</span>Click me<span style="color:var(--red);">&lt;/button&gt;</span>
+
+<span style="opacity:0.55;">/* preview updates instantly */</span>
+.wrap { <span style="color:var(--red);">display</span>: flex; }</pre>
+      <div style="border-top:1px solid #f5f2ef1f; padding:0.7rem 1.25rem; display:flex; align-items:center; gap:0.6rem;">
+        <span class="pf-status pf-status--live">3 / 3 checks</span>
+        <span class="pf-label" style="color:var(--light); opacity:0.6;">Module complete</span>
+      </div>
     </div>
-    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
-      <span class="pf-status pf-status--live">Educator</span>
-      <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.8;">
-        Create and publish courses, upload materials, set quizzes and grade submissions.
-      </p>
-    </div>
-    <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
-      <span class="pf-status pf-status--archived">Admin</span>
-      <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.8;">
-        Oversee the platform — manage users, review courses and monitor activity.
-      </p>
+  </div>
+</section>
+
+@* ── ROLES ────────────────────────────────────────────── *@
+<section class="pf-section-light">
+  <div class="pf-page" style="padding-top:3.5rem; padding-bottom:3.5rem;">
+    <span class="pf-label pf-eyebrow">Built For Everyone</span>
+    <h2 class="pf-section-header" style="margin-top:0.6rem; margin-bottom:2.5rem;">
+      One platform, three roles
+    </h2>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem;">
+      <div class="pf-feature pf-lift" style="background:var(--bg);">
+        <span class="pf-status pf-status--draft">Student</span>
+        <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.8;">
+          Enrol, learn, build in the lab, submit work, take quizzes, and track progress on the constellation.
+        </p>
+      </div>
+      <div class="pf-feature pf-lift" style="background:var(--bg);">
+        <span class="pf-status pf-status--live">Educator</span>
+        <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.8;">
+          Create and publish courses, upload materials, author labs, set quizzes and grade submissions.
+        </p>
+      </div>
+      <div class="pf-feature pf-lift" style="background:var(--bg);">
+        <span class="pf-status pf-status--archived">Admin</span>
+        <p class="pf-body-cell" style="margin-top:0.75rem; opacity:0.8;">
+          Oversee the platform — manage users, review courses and monitor activity.
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -157,29 +235,16 @@
 @* ── CTA ──────────────────────────────────────────────── *@
 @if (!isLoggedIn)
 {
-  <section class="pf-section-dark">
-    <div class="pf-page" style="padding-top:3rem; padding-bottom:3rem; text-align:center;">
+  <section class="pf-section-red">
+    <div class="pf-page" style="padding-top:3.5rem; padding-bottom:3.5rem; text-align:center;">
       <h2 class="pf-section-header" style="color:var(--bg);">Ready to forge your path?</h2>
-      <p class="pf-body" style="color:var(--light); max-width:520px; margin:0.75rem auto 1.75rem;">
+      <p class="pf-body" style="color:var(--bg); opacity:0.9; max-width:520px; margin:0.75rem auto 1.75rem;">
         Create a free account and start your first constellation today.
       </p>
       <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
-        <a href="/Auth/Register" class="pf-btn">Create Account</a>
+        <a href="/Auth/Register" class="pf-btn" style="background:var(--bg); color:var(--dark); border-color:var(--bg);">Create Account</a>
         <a href="/Auth/Login" class="pf-btn pf-btn--ghost" style="color:var(--bg); border-color:var(--bg);">Log In</a>
       </div>
     </div>
   </section>
 }
-
-@* ── TECH STACK ───────────────────────────────────────── *@
-<section class="pf-page" style="padding-top:2rem; padding-bottom:2.5rem;">
-  <div style="display:flex; gap:1rem; flex-wrap:wrap; border-top:var(--border-inner); padding-top:1.5rem;">
-    <span class="pf-label" style="align-self:center;">Built With</span>
-    @foreach (var tech in new[]{"ASP.NET Core MVC", "Entity Framework Core", "HTML5 / CSS3", "JavaScript", "Tailwind CSS"})
-    {
-      <span class="pf-status pf-status--draft" style="opacity:1; font-size:0.6rem; padding:0.2rem 0.6rem;">
-        @tech
-      </span>
-    }
-  </div>
-</section>

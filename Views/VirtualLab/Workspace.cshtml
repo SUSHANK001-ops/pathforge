@@ -1,0 +1,184 @@
+@model PathForge.Models.Entities.VirtualLab
+@using PathForge.Models.Entities
+@{
+    ViewData["Title"] = Model.Title + " — Virtual Lab";
+    Layout = "_Layout";
+    var sub = ViewBag.Submission as VirtualLabSubmission;
+    bool isManager = ViewBag.IsManager == true;
+    bool passed = sub?.Status == "Passed";
+
+    // Load saved work if present, otherwise the educator's starter code.
+    string html = sub?.Html ?? Model.StarterHtml;
+    string css  = sub?.Css  ?? Model.StarterCss;
+    string js   = sub?.Js   ?? Model.StarterJs;
+}
+
+<div class="pf-page--full" style="padding:2rem 2.5rem; max-width:1400px; margin:0 auto;">
+
+  @* Breadcrumb *@
+  <nav class="pf-label" style="margin-bottom:0.75rem;" aria-label="Breadcrumb">
+    <a asp-controller="Course" asp-action="Details" asp-route-id="@Model.Module.CourseId"
+       style="color:var(--red);">@Model.Module.Course.Title</a>
+    &nbsp;/&nbsp; Module @Model.Module.DisplayOrder &nbsp;/&nbsp; Lab
+  </nav>
+
+  <div style="display:flex; justify-content:space-between; align-items:flex-end;
+              border-bottom:var(--border-outer); padding-bottom:1.25rem; margin-bottom:1.5rem;
+              flex-wrap:wrap; gap:1rem;">
+    <div>
+      <span class="pf-label">Virtual Lab · @Model.Module.Type</span>
+      <h1 class="pf-section-header" style="margin-top:0.3rem;">@Model.Title</h1>
+    </div>
+    <div style="text-align:right;">
+      @if (passed)
+      {
+        <span class="pf-status pf-status--live">Passed</span>
+      }
+      else if (sub != null && sub.ChecksTotal > 0)
+      {
+        <span class="pf-status pf-status--draft">@sub.ChecksPassed / @sub.ChecksTotal checks</span>
+      }
+      else
+      {
+        <span class="pf-status pf-status--draft">Not started</span>
+      }
+    </div>
+  </div>
+
+  @if (TempData["Success"] != null)
+  {
+    <div class="pf-alert pf-alert--success" style="margin-bottom:1.25rem;">@TempData["Success"]</div>
+  }
+  @if (TempData["Error"] != null)
+  {
+    <div class="pf-alert pf-alert--error" style="margin-bottom:1.25rem;">@TempData["Error"]</div>
+  }
+  @if (isManager)
+  {
+    <div class="pf-alert" style="margin-bottom:1.25rem;">
+      Educator preview — your runs are not saved as a student submission.
+    </div>
+  }
+
+  @* Instructions *@
+  <div class="pf-card pf-card--outlined" style="margin-bottom:1.5rem;">
+    <span class="pf-label">Brief</span>
+    <div class="pf-body" style="white-space:pre-line; margin-top:0.4rem;">@Model.Instructions</div>
+    @if (!string.IsNullOrWhiteSpace(Model.ExpectedMarkers))
+    {
+      <div style="border-top:var(--border-inner); margin-top:0.9rem; padding-top:0.75rem;">
+        <span class="pf-label">Checks</span>
+        <ul class="pf-bullets" style="margin:0.4rem 0 0;">
+          @foreach (var marker in Model.ExpectedMarkers.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+          {
+            <li><code>@marker</code></li>
+          }
+        </ul>
+      </div>
+    }
+  </div>
+
+  @* Editor + preview *@
+  <div class="lab-grid">
+    <div class="lab-editors">
+      <div class="lab-pane">
+        <label class="pf-form-label">HTML</label>
+        <textarea id="lab-html" class="pf-input pf-code lab-code" spellcheck="false">@html</textarea>
+      </div>
+      <div class="lab-pane">
+        <label class="pf-form-label">CSS</label>
+        <textarea id="lab-css" class="pf-input pf-code lab-code" spellcheck="false">@css</textarea>
+      </div>
+      <div class="lab-pane">
+        <label class="pf-form-label">JavaScript</label>
+        <textarea id="lab-js" class="pf-input pf-code lab-code" spellcheck="false">@js</textarea>
+      </div>
+    </div>
+
+    <div class="lab-preview-wrap">
+      <div style="display:flex; justify-content:space-between; align-items:center;
+                  margin-bottom:0.5rem;">
+        <label class="pf-form-label" style="margin:0;">Live Preview</label>
+        <button type="button" id="lab-run" class="pf-btn pf-btn--ghost pf-btn--sm">Run ▶</button>
+      </div>
+      <iframe id="lab-frame" class="lab-frame" title="Lab preview"
+              sandbox="allow-scripts"></iframe>
+    </div>
+  </div>
+
+  @* Save / check *@
+  <form asp-action="Save" method="post" id="lab-save-form" style="margin-top:1.5rem;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="LabId" value="@Model.Id" />
+    <input type="hidden" name="Html" id="save-html" />
+    <input type="hidden" name="Css"  id="save-css" />
+    <input type="hidden" name="Js"   id="save-js" />
+    <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+      <button type="submit" class="pf-btn">Save &amp; Run Checks</button>
+      <a asp-controller="Progress" asp-action="Index" class="pf-btn pf-btn--ghost pf-btn--sm">
+        My Progress
+      </a>
+      <span class="pf-body-cell" style="opacity:0.6;">
+        Preview updates as you type. Saving records your work and runs the checks.
+      </span>
+    </div>
+  </form>
+</div>
+
+@section Styles {
+<style>
+  .pf-code { font-family: var(--font-mono, monospace); font-size: 0.8rem; line-height: 1.5; }
+  .lab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+  .lab-editors { display: flex; flex-direction: column; gap: 1rem; }
+  .lab-code { min-height: 120px; resize: vertical; }
+  .lab-pane label { margin-bottom: 0.3rem; }
+  .lab-preview-wrap { position: sticky; top: 80px; }
+  .lab-frame {
+    width: 100%; height: 480px; border: var(--border-outer);
+    background: #fff; border-radius: 0;
+  }
+  @@media (max-width: 900px) {
+    .lab-grid { grid-template-columns: 1fr; }
+    .lab-preview-wrap { position: static; }
+  }
+</style>
+}
+
+@section Scripts {
+<script>
+  (function () {
+    var htmlEl = document.getElementById('lab-html');
+    var cssEl  = document.getElementById('lab-css');
+    var jsEl   = document.getElementById('lab-js');
+    var frame  = document.getElementById('lab-frame');
+
+    function buildDoc() {
+      return '<!DOCTYPE html><html><head><meta charset="utf-8">' +
+             '<style>' + cssEl.value + '</style></head><body>' +
+             htmlEl.value +
+             '<script>try{' + jsEl.value + '}catch(e){document.body.insertAdjacentHTML(' +
+             '"beforeend","<pre style=\\'color:#d8000f\\'>"+e+"</pre>");}<\/script>' +
+             '</body></html>';
+    }
+
+    function render() {
+      // srcdoc + sandbox="allow-scripts" keeps lab code isolated from the app.
+      frame.srcdoc = buildDoc();
+    }
+
+    var timer;
+    function schedule() { clearTimeout(timer); timer = setTimeout(render, 350); }
+    [htmlEl, cssEl, jsEl].forEach(function (el) { el.addEventListener('input', schedule); });
+    document.getElementById('lab-run').addEventListener('click', render);
+
+    // Copy editor contents into the hidden fields right before submit.
+    document.getElementById('lab-save-form').addEventListener('submit', function () {
+      document.getElementById('save-html').value = htmlEl.value;
+      document.getElementById('save-css').value  = cssEl.value;
+      document.getElementById('save-js').value   = jsEl.value;
+    });
+
+    render();
+  })();
+</script>
+}

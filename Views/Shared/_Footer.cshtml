@@ -1,0 +1,62 @@
+@{
+  var role = Context.Session.GetString("UserRole") ?? "";
+  var isLogged = !string.IsNullOrEmpty(role);
+}
+
+<footer class="pf-footer">
+  <div class="pf-footer__inner">
+
+    <div class="pf-footer__brand">
+      <a href="/" class="pf-footer__logo"><span>PF</span> PathForge</a>
+      <p class="pf-footer__tagline">
+        A web-based learning system. Join courses, build skills in the lab,
+        and watch your progress light up the constellation.
+      </p>
+    </div>
+
+    <div class="pf-footer__col">
+      <span class="pf-footer__head">Learn</span>
+      <a href="/Course">Course Catalogue</a>
+      @if (isLogged)
+      {
+        <a href="/">Dashboard</a>
+        @if (role == "Student")
+        {
+          <a href="/Progress">My Constellation</a>
+        }
+      }
+      else
+      {
+        <a href="/Auth/Register">Create Account</a>
+        <a href="/Auth/Login">Log In</a>
+      }
+    </div>
+
+    <div class="pf-footer__col">
+      <span class="pf-footer__head">Platform</span>
+      @if (role == "Educator" || role == "Admin")
+      {
+        <a href="/Course/Manage">Manage Courses</a>
+      }
+      @if (role == "Admin")
+      {
+        <a href="/Admin">Admin Panel</a>
+      }
+      <a href="/Home/Privacy">Privacy</a>
+      <a href="/Home/Search?q=web">Search</a>
+    </div>
+
+    <div class="pf-footer__col">
+      <span class="pf-footer__head">Roles</span>
+      <span class="pf-footer__item">Student</span>
+      <span class="pf-footer__item">Educator</span>
+      <span class="pf-footer__item">Administrator</span>
+    </div>
+
+  </div>
+
+  <div class="pf-footer__bar">
+    <span>&copy; @DateTime.Now.Year PathForge. All rights reserved.</span>
+    <span class="pf-footer__built">Forge your path to mastery.</span>
+  </div>
+</footer>

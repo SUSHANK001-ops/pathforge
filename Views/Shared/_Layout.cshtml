@@ -12,9 +12,12 @@
   @* Render the shared navbar partial *@
   @await Html.PartialAsync("_Navbar")
 
-  <main>
+  <main class="pf-main">
     @RenderBody()
   </main>
+
+  @* Render the shared footer partial *@
+  @await Html.PartialAsync("_Footer")
 
   @* Red progress strip at the bottom — the FRAME.md chrome *@
   <div class="pf-progress-strip" id="readProgress" style="width:0%"></div>

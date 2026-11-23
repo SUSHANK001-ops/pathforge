@@ -1,0 +1,94 @@
+@model IEnumerable<PathForge.Models.Entities.Announcement>
+@using PathForge.Models.Entities
+@{
+    var course = ViewBag.Course as Course;
+    bool isManager = ViewBag.IsManager == true;
+    ViewData["Title"] = "Announcements — " + course?.Title;
+    Layout = "_Layout";
+}
+
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  <nav class="pf-label" style="margin-bottom:0.75rem;" aria-label="Breadcrumb">
+    <a asp-controller="Course" asp-action="Details" asp-route-id="@course?.Id" style="color:var(--red);">@course?.Title</a>
+    &nbsp;/&nbsp; Announcements
+  </nav>
+
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <span class="pf-label">Course Notices</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">Announcements</h1>
+  </div>
+
+  @if (TempData["Success"] != null)
+  {
+    <div class="pf-alert pf-alert--success" style="margin-bottom:1.5rem;">@TempData["Success"]</div>
+  }
+  @if (TempData["Error"] != null)
+  {
+    <div class="pf-alert pf-alert--error" style="margin-bottom:1.5rem;">@TempData["Error"]</div>
+  }
+
+  <div style="display:grid; grid-template-columns:@(isManager ? "1fr 340px" : "1fr"); gap:2.5rem; align-items:start;">
+
+    <div style="display:flex; flex-direction:column; gap:1rem;">
+      @if (!Model.Any())
+      {
+        <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
+          <p class="pf-body">No announcements yet.</p>
+        </div>
+      }
+      else
+      {
+        @foreach (var a in Model)
+        {
+          <div class="pf-card pf-card--outlined" style="padding:1.25rem 1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;">
+              <div>
+                <span class="pf-label">
+                  @(a.IsPinned ? "Pinned · " : "")@a.Author.FullName · @a.CreatedAt.ToString("dd MMM yyyy")
+                </span>
+                <h3 class="pf-card-title" style="font-size:1.15rem; margin-top:0.2rem;">@a.Title</h3>
+                <p class="pf-body" style="margin-top:0.4rem; white-space:pre-line;">@a.Body</p>
+              </div>
+              @if (isManager)
+              {
+                <form asp-action="Delete" method="post" style="margin:0; flex-shrink:0;">
+                  @Html.AntiForgeryToken()
+                  <input type="hidden" name="id" value="@a.Id" />
+                  <button type="submit" class="pf-btn pf-btn--danger pf-btn--sm"
+                          onclick="return confirm('Delete this announcement?')">Delete</button>
+                </form>
+              }
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    @if (isManager)
+    {
+      <div style="position:sticky; top:80px;">
+        <h2 class="pf-card-title" style="margin-bottom:1.25rem;">Post Announcement</h2>
+        <div class="pf-card pf-card--outlined">
+          <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="courseId" value="@course?.Id" />
+            <div class="pf-form-group">
+              <label class="pf-form-label">Title</label>
+              <input type="text" name="title" class="pf-input" required placeholder="e.g. Week 3 schedule change" />
+            </div>
+            <div class="pf-form-group">
+              <label class="pf-form-label">Message</label>
+              <textarea name="body" class="pf-input pf-textarea" required rows="5"></textarea>
+            </div>
+            <div class="pf-form-group" style="display:flex; align-items:center; gap:0.5rem;">
+              <input type="checkbox" name="isPinned" value="true" id="pin" style="width:auto;" />
+              <label for="pin" class="pf-form-label" style="margin:0;">Pin to top</label>
+            </div>
+            <button type="submit" class="pf-btn" style="width:100%;">Post</button>
+          </form>
+        </div>
+      </div>
+    }
+  </div>
+</div>

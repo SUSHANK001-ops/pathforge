@@ -20,6 +20,8 @@
          class="pf-btn pf-btn--ghost pf-btn--sm">+ Quiz</a>
       <a asp-controller="Assignment" asp-action="Create" asp-route-courseId="@Model.Id"
          class="pf-btn pf-btn--ghost pf-btn--sm">+ Assignment</a>
+      <a asp-controller="Announcement" asp-action="Index" asp-route-courseId="@Model.Id"
+         class="pf-btn pf-btn--ghost pf-btn--sm">Announcements</a>
       <a asp-action="Manage" class="pf-btn pf-btn--ghost pf-btn--sm">
         ← All My Courses
       </a>
@@ -61,6 +63,32 @@
                 Delete
               </button>
             </form>
+          </div>
+
+          @* Virtual Lab controls *@
+          <div style="border-top:var(--border-inner); margin-top:0.75rem; padding-top:0.75rem;
+                      display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+            <span class="pf-label" style="margin:0;">Virtual Lab</span>
+            @if (module.Lab != null)
+            {
+              <a asp-controller="VirtualLab" asp-action="Workspace" asp-route-id="@module.Lab.Id"
+                 class="pf-btn pf-btn--ghost pf-btn--sm">Open</a>
+              <a asp-controller="VirtualLab" asp-action="Edit" asp-route-id="@module.Lab.Id"
+                 class="pf-btn pf-btn--ghost pf-btn--sm">Edit Lab</a>
+              <form asp-controller="VirtualLab" asp-action="Delete" asp-route-id="@module.Lab.Id"
+                    method="post" style="margin:0;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="pf-btn pf-btn--danger pf-btn--sm"
+                        onclick="return confirm('Delete this lab and all its submissions?')">
+                  Remove Lab
+                </button>
+              </form>
+            }
+            else
+            {
+              <a asp-controller="VirtualLab" asp-action="Create" asp-route-moduleId="@module.Id"
+                 class="pf-btn pf-btn--sm">+ Add Virtual Lab</a>
+            }
           </div>
 
           @* Materials *@

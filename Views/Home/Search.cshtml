@@ -1,0 +1,68 @@
+@model PathForge.Models.ViewModels.SearchResultViewModel
+@{
+    ViewData["Title"] = "Search — " + Model.Query;
+    Layout = "_Layout";
+    int total = Model.Courses.Count + Model.Discussions.Count;
+}
+
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <span class="pf-label">Search Results</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">“@Model.Query”</h1>
+    <p class="pf-body" style="opacity:0.65; margin-top:0.4rem;">@total result(s)</p>
+  </div>
+
+  @if (total == 0)
+  {
+    <div class="pf-card pf-card--outlined" style="padding:2rem;">
+      <p class="pf-body">Nothing matched your search. Try different keywords.</p>
+    </div>
+  }
+
+  @if (Model.Courses.Any())
+  {
+    <h2 class="pf-card-title" style="margin-bottom:1.25rem;">Courses</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+                gap:1.5rem; margin-bottom:2.5rem;">
+      @foreach (var c in Model.Courses)
+      {
+        <div class="pf-course-card">
+          <div style="padding:1.25rem 1.5rem;">
+            <span class="pf-course-card__category">@c.Category</span>
+            <h3 class="pf-course-card__title" style="margin-top:0.35rem;">@c.Title</h3>
+            <p class="pf-body-cell" style="margin-top:0.5rem; opacity:0.65;
+               overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
+              @c.Description
+            </p>
+            <div class="pf-course-card__actions">
+              <a asp-controller="Course" asp-action="Details" asp-route-id="@c.Id"
+                 class="pf-btn pf-btn--sm">View Course</a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (Model.Discussions.Any())
+  {
+    <h2 class="pf-card-title" style="margin-bottom:1.25rem;">Discussions</h2>
+    <div style="display:flex; flex-direction:column; gap:1rem;">
+      @foreach (var p in Model.Discussions)
+      {
+        <div class="pf-card pf-card--outlined" style="padding:1.25rem 1.5rem;">
+          <span class="pf-label">@p.Course.Title · @p.Author.FullName</span>
+          <h3 class="pf-card-title" style="font-size:1.1rem; margin-top:0.2rem;">@p.Title</h3>
+          <p class="pf-body-cell" style="margin-top:0.35rem; opacity:0.7;
+             overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
+            @p.Body
+          </p>
+          <a asp-controller="Discussion" asp-action="Thread" asp-route-id="@p.Id"
+             class="pf-btn pf-btn--ghost pf-btn--sm" style="margin-top:0.6rem;">Open Thread</a>
+        </div>
+      }
+    </div>
+  }
+
+</div>

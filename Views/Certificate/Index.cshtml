@@ -1,0 +1,42 @@
+@model IEnumerable<PathForge.Models.Entities.Certificate>
+@{
+    ViewData["Title"] = "My Certificates";
+    Layout = "_Layout";
+}
+
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
+
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <span class="pf-label">Achievements</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">My Certificates</h1>
+    <p class="pf-body" style="opacity:0.7; margin-top:0.4rem;">
+      Earned automatically when you complete every module in a course.
+    </p>
+  </div>
+
+  @if (!Model.Any())
+  {
+    <div class="pf-card pf-card--outlined" style="padding:2rem;">
+      <p class="pf-body">No certificates yet. Finish a course to earn your first.</p>
+      <a href="/Course" class="pf-btn pf-btn--sm" style="margin-top:0.75rem;">Browse Courses</a>
+    </div>
+  }
+  else
+  {
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:1.5rem;">
+      @foreach (var c in Model)
+      {
+        <div class="pf-card pf-card--outlined" style="padding:1.5rem;">
+          <span class="pf-label">Certificate · @c.SerialCode</span>
+          <h2 class="pf-card-title" style="font-size:1.2rem; margin-top:0.35rem;">@c.Course.Title</h2>
+          <p class="pf-body-cell" style="opacity:0.7; margin-top:0.4rem;">
+            Issued @c.IssuedAt.ToString("dd MMM yyyy") · By @c.Course.Educator.FullName
+          </p>
+          <a asp-action="View" asp-route-id="@c.Id" class="pf-btn pf-btn--sm" style="margin-top:0.9rem;">
+            View &amp; Print
+          </a>
+        </div>
+      }
+    </div>
+  }
+</div>

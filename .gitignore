@@ -45,3 +45,5 @@ wwwroot/uploads/
 
 # Local run log
 run.log
+run.out.log
+run.err.log

@@ -37,6 +37,8 @@
            class="pf-btn pf-btn--ghost pf-btn--sm">Assignments</a>
         <a asp-controller="Discussion" asp-action="Index" asp-route-courseId="@Model.Id"
            class="pf-btn pf-btn--ghost pf-btn--sm">Discussion</a>
+        <a asp-controller="Announcement" asp-action="Index" asp-route-courseId="@Model.Id"
+           class="pf-btn pf-btn--ghost pf-btn--sm">Announcements</a>
       }
       else if (userRole == "Student" && !isEnrolled)
       {
@@ -54,6 +56,8 @@
            class="pf-btn pf-btn--ghost pf-btn--sm">Assignments</a>
         <a asp-controller="Discussion" asp-action="Index" asp-route-courseId="@Model.Id"
            class="pf-btn pf-btn--ghost pf-btn--sm">Discussion</a>
+        <a asp-controller="Announcement" asp-action="Index" asp-route-courseId="@Model.Id"
+           class="pf-btn pf-btn--ghost pf-btn--sm">Announcements</a>
       }
     </div>
   </div>
@@ -95,6 +99,16 @@
           @* Materials for enrolled students *@
           @if (isEnrolled || isOwner || userRole == "Admin")
           {
+            @if (module.Lab != null)
+            {
+              <div style="border-top:var(--border-inner); margin-top:1rem; padding-top:0.75rem;
+                          display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap;">
+                <span class="pf-label" style="margin:0;">Virtual Lab</span>
+                <a asp-controller="VirtualLab" asp-action="Workspace" asp-route-id="@module.Lab.Id"
+                   class="pf-btn pf-btn--sm">Open Lab ▶</a>
+                <span class="pf-body-cell" style="opacity:0.65;">@module.Lab.Title</span>
+              </div>
+            }
             @if (module.Materials.Any())
             {
               <div style="border-top:var(--border-inner); margin-top:1rem; padding-top:0.75rem;">

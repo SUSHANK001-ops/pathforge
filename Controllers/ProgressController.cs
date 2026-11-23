@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PathForge.Data;
 using PathForge.Helpers;
+using PathForge.Models.Entities;
 
 namespace PathForge.Controllers
 {
@@ -79,7 +80,41 @@ namespace PathForge.Controllers
             }
 
             await _db.SaveChangesAsync();
+            await IssueCertificateIfComplete(userId, module?.CourseId ?? 0);
             return RedirectToAction("Index");
+        }
+
+        // Issues a certificate the first time a student completes every module
+        // in a course. Safe to call repeatedly — it no-ops if already issued
+        // or the course isn't fully complete.
+        private async Task IssueCertificateIfComplete(int userId, int courseId)
+        {
+            if (courseId == 0) return;
+
+            var moduleIds = await _db.Modules
+                .Where(m => m.CourseId == courseId)
+                .Select(m => m.Id)
+                .ToListAsync();
+            if (moduleIds.Count == 0) return;
+
+            int completed = await _db.StudentProgress
+                .CountAsync(p => p.StudentId == userId &&
+                                 moduleIds.Contains(p.ModuleId) &&
+                                 p.Status == "Completed");
+            if (completed < moduleIds.Count) return;
+
+            bool exists = await _db.Certificates
+                .AnyAsync(c => c.StudentId == userId && c.CourseId == courseId);
+            if (exists) return;
+
+            _db.Certificates.Add(new Certificate
+            {
+                StudentId  = userId,
+                CourseId   = courseId,
+                SerialCode = $"PF-{courseId:D3}-{userId:D3}-{DateTime.Now:yyyyMMdd}",
+                IssuedAt   = DateTime.Now
+            });
+            await _db.SaveChangesAsync();
         }
     }
 }

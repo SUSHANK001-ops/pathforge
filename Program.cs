@@ -8,7 +8,7 @@ builder.Services.AddControllersWithViews();
 
 // Database
 builder.Services.AddDbContext<PathForgeDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Session (for login state — no ASP Identity)
 builder.Services.AddSession(options =>

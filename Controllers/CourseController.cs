@@ -44,6 +44,39 @@ namespace PathForge.Controllers
             ViewBag.CurrentCategory = category;
             ViewBag.Search = search;
 
+            // For logged-in students: expose their per-course progress so the
+            // catalogue cards can show a completion bar.
+            int userId = SessionHelper.GetUserId(HttpContext);
+            if (userId > 0 && SessionHelper.GetUserRole(HttpContext) == "Student")
+            {
+                var enrolledIds = await _db.CourseEnrolments
+                    .Where(e => e.StudentId == userId)
+                    .Select(e => e.CourseId)
+                    .ToListAsync();
+
+                var progress = await _db.StudentProgress
+                    .Where(p => p.StudentId == userId)
+                    .Select(p => new { p.ModuleId, p.Status })
+                    .ToListAsync();
+
+                var moduleCourse = await _db.Modules
+                    .Where(m => enrolledIds.Contains(m.CourseId))
+                    .Select(m => new { m.Id, m.CourseId })
+                    .ToListAsync();
+
+                var pct = new Dictionary<int, int>();
+                foreach (var cid in enrolledIds)
+                {
+                    var moduleIds = moduleCourse.Where(m => m.CourseId == cid).Select(m => m.Id).ToHashSet();
+                    int tot = moduleIds.Count;
+                    int done = progress.Count(p => moduleIds.Contains(p.ModuleId) && p.Status == "Completed");
+                    pct[cid] = tot == 0 ? 0 : (int)Math.Round(100.0 * done / tot);
+                }
+
+                ViewBag.EnrolledIds = enrolledIds;
+                ViewBag.ProgressPercent = pct;
+            }
+
             return View(await query.ToListAsync());
         }
 
@@ -54,6 +87,8 @@ namespace PathForge.Controllers
                 .Include(c => c.Educator)
                 .Include(c => c.Modules.OrderBy(m => m.DisplayOrder))
                     .ThenInclude(m => m.Materials)
+                .Include(c => c.Modules)
+                    .ThenInclude(m => m.Lab)
                 .Include(c => c.Enrolments)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
@@ -233,6 +268,8 @@ namespace PathForge.Controllers
             var course = await _db.Courses
                 .Include(c => c.Modules.OrderBy(m => m.DisplayOrder))
                     .ThenInclude(m => m.Materials)
+                .Include(c => c.Modules)
+                    .ThenInclude(m => m.Lab)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (course == null) return NotFound();

@@ -25,5 +25,8 @@ namespace PathForge.Models.Entities
 
         public ICollection<Material> Materials { get; set; } = new List<Material>();
         public ICollection<StudentProgress> ProgressRecords { get; set; } = new List<StudentProgress>();
+
+        // Optional virtual lab (present when Type == "Lab")
+        public VirtualLab? Lab { get; set; }
     }
 }

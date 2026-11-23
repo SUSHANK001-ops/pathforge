@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Course Catalogue";
     Layout = "_Layout";
+    var enrolledIds = ViewBag.EnrolledIds as List<int> ?? new List<int>();
+    var progressPct = ViewBag.ProgressPercent as Dictionary<int, int> ?? new Dictionary<int, int>();
 }
 
 <div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
@@ -90,9 +92,23 @@
               &nbsp;·&nbsp; By @course.Educator.FullName
             </div>
 
+            @if (enrolledIds.Contains(course.Id))
+            {
+              int pct = progressPct.TryGetValue(course.Id, out var p) ? p : 0;
+              <div style="margin-top:0.75rem;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
+                  <span class="pf-label" style="margin:0;">Your Progress</span>
+                  <span class="pf-label" style="margin:0;">@pct%</span>
+                </div>
+                <div class="pf-progress">
+                  <div class="pf-progress__fill" style="width:@(pct)%;"></div>
+                </div>
+              </div>
+            }
+
             <div class="pf-course-card__actions">
               <a asp-action="Details" asp-route-id="@course.Id" class="pf-btn pf-btn--sm">
-                View Course
+                @(enrolledIds.Contains(course.Id) ? "Continue" : "View Course")
               </a>
             </div>
           </div>
