@@ -2,115 +2,266 @@
 @{
     ViewData["Title"] = "My Profile";
     Layout = "_Layout";
+    // Build initials from FullName
+    var parts    = Model.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    string initials;
+    if (parts.Length >= 2)
+        initials = $"{parts[0][0]}{parts[parts.Length - 1][0]}".ToUpper();
+    else if (Model.FullName.Length > 0)
+        initials = Model.FullName[0].ToString().ToUpper();
+    else
+        initials = "?";
 }
 
 <div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
 
-  @* Page header *@
-  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2.5rem;">
-    <span class="pf-label">Account</span>
-    <h1 class="pf-section-header" style="margin-top:0.4rem;">My Profile</h1>
-    <p class="pf-body" style="opacity:0.6; margin-top:0.35rem;">
-      @Model.Email &nbsp;·&nbsp;
-      <span class="pf-status pf-status--live">@Model.Role</span>
-    </p>
+  @* ── Page header ─────────────────────────────────────────── *@
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2.5rem;
+              display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+    @* Avatar circle *@
+    <div style="width:72px; height:72px; border:3px solid var(--red); background:var(--dark);
+                display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+      <span style="font-family:var(--font-display); font-size:1.6rem; color:var(--bg);">
+        @initials
+      </span>
+    </div>
+    <div>
+      <span class="pf-label">My Account</span>
+      <h1 class="pf-section-header" style="margin-top:0.3rem; line-height:1.1;">
+        @Model.FullName
+      </h1>
+      <p style="font-family:var(--font-chrome); font-size:0.7rem; letter-spacing:1px;
+                 text-transform:uppercase; color:var(--dark); opacity:0.6; margin-top:0.25rem;">
+        @Model.Email &nbsp;·&nbsp;
+        <span class="pf-status pf-status--live">@Model.Role</span>
+        &nbsp;·&nbsp; Joined @Model.JoinedAt.ToString("MMM yyyy")
+      </p>
+    </div>
   </div>
 
   @if (TempData["Success"] != null)
   {
-    <div class="pf-alert pf-alert--success" style="margin-bottom:1.5rem;">
-      @TempData["Success"]
-    </div>
+    <div class="pf-alert pf-alert--success" style="margin-bottom:1.5rem;">@TempData["Success"]</div>
+  }
+  @if (TempData["Error"] != null)
+  {
+    <div class="pf-alert pf-alert--error" style="margin-bottom:1.5rem;">@TempData["Error"]</div>
   }
 
-  <div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start;">
+  <div style="display:grid; grid-template-columns:1fr 340px; gap:3rem; align-items:start;">
 
-    @* Edit form *@
+    @* ── Left: edit form ───────────────────────────────────── *@
     <div>
-      <h2 class="pf-card-title" style="margin-bottom:1.25rem;">Edit Details</h2>
+      <h2 class="pf-card-title" style="margin-bottom:1.5rem;">Edit Details</h2>
 
-      <form asp-action="Profile" asp-controller="Auth" method="post">
+      <form asp-action="Profile" asp-controller="Auth" method="post" id="profileForm">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
 
         <div class="pf-form-group">
           <label asp-for="FullName" class="pf-form-label">Full Name</label>
-          <input asp-for="FullName" class="pf-input" />
+          <input asp-for="FullName" class="pf-input" autocomplete="name" />
           <span asp-validation-for="FullName" class="pf-field-error"></span>
         </div>
 
         <div class="pf-form-group">
-          <label class="pf-form-label">Email Address (cannot change)</label>
+          <label class="pf-form-label">Email Address</label>
           <input type="text" class="pf-input" value="@Model.Email" disabled
-                 style="opacity:0.5; cursor:not-allowed;" />
+                 style="opacity:0.5; cursor:not-allowed; background:var(--light);" />
+          <span class="pf-body-cell" style="font-size:0.7rem; opacity:0.55; margin-top:0.3rem; display:block;">
+            Email cannot be changed.
+          </span>
         </div>
 
         <div class="pf-form-group">
           <label asp-for="Bio" class="pf-form-label">Bio</label>
-          <textarea asp-for="Bio" class="pf-input pf-textarea"
-                    placeholder="Tell others about yourself..."></textarea>
+          <textarea asp-for="Bio" class="pf-input pf-textarea" rows="3"
+                    placeholder="Tell others a little about yourself..."></textarea>
         </div>
 
-        <h3 class="pf-card-title" style="margin:1.5rem 0 1rem; font-size:1.1rem;">
-          Change Password
-        </h3>
-        <p class="pf-body" style="font-size:0.8rem; opacity:0.6; margin-bottom:1rem;">
-          Leave blank to keep your current password.
-        </p>
+        @* ── Password change section ───────────────────────── *@
+        <div style="border-top:var(--border-outer); margin-top:2rem; padding-top:1.75rem;">
+          <h3 class="pf-card-title" style="font-size:1.1rem; margin-bottom:0.4rem;">
+            Change Password
+          </h3>
+          <p class="pf-body-cell" style="opacity:0.6; margin-bottom:1.25rem;">
+            Leave both fields blank to keep your current password.
+          </p>
 
-        <div class="pf-form-group">
-          <label asp-for="NewPassword" class="pf-form-label">New Password</label>
-          <input asp-for="NewPassword" class="pf-input" type="password"
-                 placeholder="Min 8 characters" />
-          <span asp-validation-for="NewPassword" class="pf-field-error"></span>
+          <div class="pf-form-group">
+            <label asp-for="NewPassword" class="pf-form-label">New Password</label>
+            <div style="position:relative;">
+              <input asp-for="NewPassword" class="pf-input" type="password"
+                     id="newPwField" autocomplete="new-password"
+                     placeholder="Min 8 chars, upper, lower, number, symbol"
+                     oninput="checkPwStrength(this.value)" />
+              <button type="button" onclick="togglePw('newPwField', this)"
+                      style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%);
+                             background:none; border:none; cursor:pointer; font-family:var(--font-chrome);
+                             font-size:0.65rem; letter-spacing:1px; text-transform:uppercase;
+                             color:var(--red);">SHOW</button>
+            </div>
+            <span asp-validation-for="NewPassword" class="pf-field-error"></span>
+
+            @* Strength bar *@
+            <div id="pwStrengthWrap" style="margin-top:0.5rem; display:none;">
+              <div style="display:flex; gap:4px; margin-bottom:0.3rem;">
+                <div id="ps1" class="pw-seg"></div>
+                <div id="ps2" class="pw-seg"></div>
+                <div id="ps3" class="pw-seg"></div>
+                <div id="ps4" class="pw-seg"></div>
+              </div>
+              <span id="pwStrengthLabel" class="pf-label" style="font-size:0.6rem;"></span>
+            </div>
+
+            @* Checklist *@
+            <ul style="list-style:none; margin-top:0.5rem;" id="pwChecklist">
+              <li id="pc-len"  class="pw-check">At least 8 characters</li>
+              <li id="pc-up"   class="pw-check">One uppercase letter</li>
+              <li id="pc-lo"   class="pw-check">One lowercase letter</li>
+              <li id="pc-num"  class="pw-check">One number</li>
+              <li id="pc-sym"  class="pw-check">One special character (@@, !, # …)</li>
+            </ul>
+          </div>
+
+          <div class="pf-form-group">
+            <label asp-for="ConfirmNewPassword" class="pf-form-label">Confirm New Password</label>
+            <div style="position:relative;">
+              <input asp-for="ConfirmNewPassword" class="pf-input" type="password"
+                     id="confirmPwField" autocomplete="new-password" />
+              <button type="button" onclick="togglePw('confirmPwField', this)"
+                      style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%);
+                             background:none; border:none; cursor:pointer; font-family:var(--font-chrome);
+                             font-size:0.65rem; letter-spacing:1px; text-transform:uppercase;
+                             color:var(--red);">SHOW</button>
+            </div>
+            <span asp-validation-for="ConfirmNewPassword" class="pf-field-error"></span>
+          </div>
         </div>
 
-        <div class="pf-form-group">
-          <label asp-for="ConfirmNewPassword" class="pf-form-label">Confirm New Password</label>
-          <input asp-for="ConfirmNewPassword" class="pf-input" type="password" />
-          <span asp-validation-for="ConfirmNewPassword" class="pf-field-error"></span>
-        </div>
-
-        <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
-          <button type="submit" class="pf-btn" id="saveProfileBtn">Save Changes</button>
+        <div style="display:flex; gap:0.75rem; margin-top:1.75rem;">
+          <button type="submit" class="pf-btn">Save Changes</button>
           <a href="/Home/Dashboard" class="pf-btn pf-btn--ghost">Cancel</a>
         </div>
       </form>
     </div>
 
-    @* Info panel (fin-grid cell style) *@
-    <div class="pf-stat-grid" style="align-self:start;">
-      <div class="pf-stat-cell">
-        <span class="pf-stat-cell__label">Role</span>
-        <span class="pf-stat-cell__number" style="font-size:1.5rem;">@Model.Role</span>
+    @* ── Right: stats panel ─────────────────────────────────── *@
+    <div style="position:sticky; top:80px;">
+      <h2 class="pf-card-title" style="margin-bottom:1.25rem;">Activity</h2>
+
+      <div class="pf-stat-grid" style="margin-bottom:1.5rem;">
+        <div class="pf-stat-cell">
+          <span class="pf-stat-cell__number">@Model.CoursesEnrolled</span>
+          <span class="pf-stat-cell__label">Enrolled</span>
+        </div>
+        <div class="pf-stat-cell">
+          <span class="pf-stat-cell__number">@Model.CoursesCompleted</span>
+          <span class="pf-stat-cell__label">Completed</span>
+        </div>
+        <div class="pf-stat-cell">
+          <span class="pf-stat-cell__number">@Model.CertificatesEarned</span>
+          <span class="pf-stat-cell__label">Certificates</span>
+        </div>
+        <div class="pf-stat-cell">
+          <span class="pf-stat-cell__number">@Model.QuizzesPassed</span>
+          <span class="pf-stat-cell__label">Quizzes Passed</span>
+        </div>
+        <div class="pf-stat-cell">
+          <span class="pf-stat-cell__number">@Model.AssignmentsGraded</span>
+          <span class="pf-stat-cell__label">Graded Work</span>
+        </div>
       </div>
-      <div class="pf-stat-cell">
-        <span class="pf-stat-cell__label">Member Since</span>
-        <span class="pf-stat-cell__number" style="font-size:1.25rem;">
-          2026
-        </span>
+
+      <div style="display:flex; flex-direction:column; gap:0.5rem;">
+        @if (Model.Role == "Student")
+        {
+          <a href="/Progress" class="pf-btn pf-btn--ghost pf-btn--sm">View Constellation</a>
+          <a href="/Certificate" class="pf-btn pf-btn--ghost pf-btn--sm">My Certificates</a>
+          <a href="/Course" class="pf-btn pf-btn--ghost pf-btn--sm">Browse Courses</a>
+        }
+        else if (Model.Role == "Educator" || Model.Role == "Admin")
+        {
+          <a href="/Course/Manage" class="pf-btn pf-btn--ghost pf-btn--sm">Manage Courses</a>
+          @if (Model.Role == "Admin")
+          {
+            <a href="/Admin" class="pf-btn pf-btn--ghost pf-btn--sm">Admin Panel</a>
+          }
+        }
+        <a href="/Auth/Logout" class="pf-btn pf-btn--danger pf-btn--sm"
+           onclick="return confirm('Log out of PathForge?')">Log Out</a>
       </div>
     </div>
 
   </div>
-
 </div>
+
+@section Styles {
+<style>
+  .pw-seg { flex:1; height:5px; background:var(--light); border:1px solid #1c141033; transition:background .2s; }
+  .pw-check { font-family:var(--font-chrome); font-size:0.65rem; letter-spacing:1px; text-transform:uppercase;
+              color:var(--dark); opacity:0.4; padding-left:1.1rem; position:relative; margin-bottom:0.2rem; }
+  .pw-check::before { content:'✗'; position:absolute; left:0; color:var(--dark); opacity:0.4; }
+  .pw-check.pass { opacity:1; color:var(--dark); }
+  .pw-check.pass::before { content:'✓'; color:var(--red); opacity:1; }
+  @@media (max-width:860px) {
+    div[style*="grid-template-columns:1fr 340px"] { grid-template-columns:1fr !important; }
+    div[style*="position:sticky"] { position:static !important; }
+  }
+</style>
+}
 
 @section Scripts {
   <partial name="_ValidationScriptsPartial" />
   <script>
-    // Confirm before saving sensitive changes (password change in particular).
-    (function () {
-      var form = document.querySelector('form[action="/Auth/Profile"], form');
-      var pw   = document.getElementById('@Html.IdFor(m => m.NewPassword)');
-      if (!form) return;
-      form.addEventListener('submit', function (e) {
-        var changingPw = pw && pw.value && pw.value.length > 0;
-        var msg = changingPw
-          ? 'Change your password? You will need the new password next time you log in.'
-          : 'Save changes to your profile?';
-        if (!confirm(msg)) { e.preventDefault(); }
+    function togglePw(fieldId, btn) {
+      var f = document.getElementById(fieldId);
+      if (!f) return;
+      var show = f.type === 'password';
+      f.type = show ? 'text' : 'password';
+      btn.textContent = show ? 'HIDE' : 'SHOW';
+    }
+
+    function checkPwStrength(val) {
+      var wrap = document.getElementById('pwStrengthWrap');
+      var list = document.getElementById('pwChecklist');
+      if (!wrap) return;
+      wrap.style.display = val.length > 0 ? '' : 'none';
+      list.style.display = val.length > 0 ? '' : 'none';
+
+      var rules = [
+        { id:'pc-len', ok: val.length >= 8 },
+        { id:'pc-up',  ok: /[A-Z]/.test(val) },
+        { id:'pc-lo',  ok: /[a-z]/.test(val) },
+        { id:'pc-num', ok: /\d/.test(val) },
+        { id:'pc-sym', ok: /[^a-zA-Z0-9]/.test(val) }
+      ];
+      var score = rules.filter(function(r){return r.ok;}).length;
+      rules.forEach(function(r) {
+        var el = document.getElementById(r.id);
+        if (el) el.className = 'pw-check' + (r.ok ? ' pass' : '');
       });
-    })();
+
+      var colours = ['#ccc','var(--red)','var(--red)','var(--dark)','var(--dark)'];
+      var opacities= [0.3,0.5,0.7,0.85,1];
+      var labels  = ['','Too Weak','Weak','Good','Strong'];
+      for (var i=1;i<=4;i++){
+        var seg = document.getElementById('ps'+i);
+        if (seg) seg.style.background = i <= score ? colours[score] : 'var(--light)';
+        if (seg) seg.style.opacity = i <= score ? opacities[score] : '1';
+      }
+      var lbl = document.getElementById('pwStrengthLabel');
+      if (lbl) lbl.textContent = labels[score] || '';
+    }
+
+    // Confirm before saving when a new password is typed.
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      var pw = document.getElementById('newPwField');
+      var changing = pw && pw.value && pw.value.length > 0;
+      var msg = changing
+        ? 'Save changes and update your password? You will need the new password next time you log in.'
+        : 'Save profile changes?';
+      if (!confirm(msg)) e.preventDefault();
+    });
   </script>
 }

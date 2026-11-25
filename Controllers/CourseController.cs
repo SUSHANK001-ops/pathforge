@@ -90,6 +90,8 @@ namespace PathForge.Controllers
                 .Include(c => c.Modules)
                     .ThenInclude(m => m.Lab)
                 .Include(c => c.Enrolments)
+                .Include(c => c.Quizzes)
+                    .ThenInclude(q => q.Questions)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (course == null) return NotFound();
@@ -102,6 +104,16 @@ namespace PathForge.Controllers
 
             ViewBag.IsOwner = userId == course.EducatorId;
             ViewBag.UserRole = SessionHelper.GetUserRole(HttpContext);
+
+            // Which quizzes has this student already attempted?
+            if (userId > 0)
+            {
+                var attempted = await _db.QuizAttempts
+                    .Where(a => a.StudentId == userId && a.Quiz.CourseId == id)
+                    .Select(a => a.QuizId)
+                    .ToListAsync();
+                ViewBag.AttemptedQuizIds = attempted;
+            }
 
             return View(course);
         }

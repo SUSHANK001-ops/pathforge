@@ -112,13 +112,37 @@ namespace PathForge.Controllers
             var user = await _db.Users.FindAsync(userId);
             if (user == null) return RedirectToAction("Login");
 
+            // ── Stats for the right panel ────────────────────────────
+            var enrolments = await _db.CourseEnrolments
+                .Where(e => e.StudentId == userId)
+                .Select(e => e.CourseId)
+                .ToListAsync();
+
+            int completed = 0;
+            foreach (var cid in enrolments)
+            {
+                var total = await _db.Modules.CountAsync(m => m.CourseId == cid);
+                var done  = await _db.StudentProgress
+                    .CountAsync(p => p.StudentId == userId && p.ModuleId != 0 &&
+                                    _db.Modules.Any(m => m.Id == p.ModuleId && m.CourseId == cid)
+                                    && p.Status == "Completed");
+                if (total > 0 && done == total) completed++;
+            }
+
             var vm = new ProfileViewModel
             {
-                Id       = user.Id,
-                FullName = user.FullName,
-                Email    = user.Email,
-                Role     = user.Role,
-                Bio      = user.Bio
+                Id                 = user.Id,
+                FullName           = user.FullName,
+                Email              = user.Email,
+                Role               = user.Role,
+                Bio                = user.Bio,
+                JoinedAt           = user.CreatedAt,
+                CoursesEnrolled    = enrolments.Count,
+                CoursesCompleted   = completed,
+                CertificatesEarned = await _db.Certificates.CountAsync(c => c.StudentId == userId),
+                QuizzesPassed      = await _db.QuizAttempts.CountAsync(a => a.StudentId == userId && a.Passed),
+                AssignmentsGraded  = await _db.AssignmentSubmissions
+                                        .CountAsync(s => s.StudentId == userId && s.Status == "Graded")
             };
             return View(vm);
         }

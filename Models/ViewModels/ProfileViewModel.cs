@@ -10,12 +10,19 @@ namespace PathForge.Models.ViewModels
         [MaxLength(100)]
         public string FullName { get; set; } = string.Empty;
 
-        // Email shown but not editable
-        public string Email { get; set; } = string.Empty;
-        public string Role { get; set; } = string.Empty;
+        public string Email    { get; set; } = string.Empty;
+        public string Role     { get; set; } = string.Empty;
+        public DateTime JoinedAt { get; set; } = DateTime.Now;
 
         [MaxLength(500)]
         public string? Bio { get; set; }
+
+        // Stats shown in the right panel
+        public int CoursesEnrolled    { get; set; }
+        public int CoursesCompleted   { get; set; }
+        public int CertificatesEarned { get; set; }
+        public int QuizzesPassed      { get; set; }
+        public int AssignmentsGraded  { get; set; }
 
         // Optional password change — blank means no change
         [MinLength(8, ErrorMessage = "New password must be at least 8 characters")]

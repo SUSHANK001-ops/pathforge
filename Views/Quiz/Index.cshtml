@@ -1,21 +1,105 @@
+@model IEnumerable<PathForge.Models.Entities.Quiz>
 @{
     ViewData["Title"] = "Quizzes";
+    Layout = "_Layout";
+    var attempted = ViewBag.AttemptedIds as List<int> ?? new List<int>();
+    string userRole = ViewBag.UserRole ?? "";
+    bool isStudent = userRole == "Student";
 }
 
-<div class="pf-page py-12">
-    <div class="flex justify-between items-end mb-8 border-b-[3px] border-[var(--dark)] pb-4">
-        <div>
-            <span class="pf-label mb-2">ASSESSMENT ENGINE</span>
-            <h1 class="pf-section-header">Knowledge Quizzes</h1>
-        </div>
-    </div>
+<div class="pf-page" style="padding-top:3rem; padding-bottom:3rem;">
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="pf-card--outlined">
-            <span class="pf-label">MODULE 1 CHECKPOINT</span>
-            <h3 class="pf-card-title my-2">C# & MVC Fundamentals</h3>
-            <p class="pf-body-cell mb-4">10 questions &middot; 30 minutes time limit &middot; 50% pass mark</p>
-            <a href="/Quiz/Take/1" class="pf-btn pf-btn--sm">Start Assessment</a>
-        </div>
+  <div style="border-bottom:var(--border-outer); padding-bottom:1.5rem; margin-bottom:2rem;">
+    <span class="pf-label">Assessments</span>
+    <h1 class="pf-section-header" style="margin-top:0.4rem;">Quizzes</h1>
+    <p class="pf-body" style="opacity:0.65; margin-top:0.4rem;">
+      @if (isStudent)
+      {
+        @:All quizzes from your enrolled courses. Click Start to begin, or View Result to revisit a completed attempt.
+      }
+      else
+      {
+        @:All quizzes across your courses.
+      }
+    </p>
+  </div>
+
+  @if (!Model.Any())
+  {
+    <div class="pf-card pf-card--outlined" style="padding:2rem;">
+      <p class="pf-body">
+        @if (isStudent)
+        {
+          @:No quizzes yet. Enrol in a course that has assessments.
+        }
+        else
+        {
+          @:No quizzes yet. Create one from the course editor.
+        }
+      </p>
+      <a href="/Course" class="pf-btn pf-btn--sm" style="margin-top:0.75rem;">Browse Courses</a>
     </div>
+  }
+  else
+  {
+    @* Group quizzes by course *@
+    var grouped = Model.GroupBy(q => q.Course).OrderBy(g => g.Key.Title);
+    foreach (var group in grouped)
+    {
+      <div style="margin-bottom:2.5rem;">
+        <h2 class="pf-card-title" style="margin-bottom:1rem; font-size:1.2rem;">
+          <span class="pf-label" style="display:block; margin-bottom:0.2rem;">@group.Key.Category</span>
+          @group.Key.Title
+        </h2>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1rem;">
+          @foreach (var quiz in group)
+          {
+            bool done = attempted.Contains(quiz.Id);
+            <div class="pf-card pf-card--outlined" style="padding:1.5rem; display:flex; flex-direction:column; gap:0.6rem;">
+
+              <span class="pf-label" style="margin:0;">
+                @quiz.Questions.Count question@(quiz.Questions.Count != 1 ? "s" : "")
+                &nbsp;·&nbsp; @quiz.TimeLimitMinutes min
+                &nbsp;·&nbsp; Pass: @quiz.PassMarkPercent%
+              </span>
+
+              <h3 class="pf-card-title" style="font-size:1.1rem;">@quiz.Title</h3>
+
+              @if (!string.IsNullOrWhiteSpace(quiz.Description))
+              {
+                <p class="pf-body-cell" style="opacity:0.7;">@quiz.Description</p>
+              }
+
+              <div style="display:flex; align-items:center; gap:0.6rem; margin-top:0.4rem; flex-wrap:wrap;">
+                @if (isStudent)
+                {
+                  if (done)
+                  {
+                    <span class="pf-status pf-status--live">Completed</span>
+                    <a asp-action="Result" asp-route-quizId="@quiz.Id"
+                       asp-route-studentId="@Context.Session.GetString("UserId")"
+                       class="pf-btn pf-btn--ghost pf-btn--sm">View Result</a>
+                  }
+                  else
+                  {
+                    <a asp-action="Take" asp-route-id="@quiz.Id" class="pf-btn pf-btn--sm">
+                      Start Quiz ▶
+                    </a>
+                  }
+                }
+                else
+                {
+                  <a asp-action="EditQuestions" asp-route-id="@quiz.Id"
+                     class="pf-btn pf-btn--ghost pf-btn--sm">Edit Questions</a>
+                  <a asp-controller="Course" asp-action="Details" asp-route-id="@quiz.CourseId"
+                     class="pf-btn pf-btn--ghost pf-btn--sm">Course</a>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
 </div>

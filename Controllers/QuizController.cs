@@ -12,6 +12,54 @@ namespace PathForge.Controllers
 
         public QuizController(PathForgeDbContext db) { _db = db; }
 
+        // ── GET /Quiz — Student: quizzes for enrolled courses ────────
+        public async Task<IActionResult> Index()
+        {
+            if (SessionHelper.RequireLogin(HttpContext, TempData))
+                return RedirectToAction("Login", "Auth");
+
+            int userId  = SessionHelper.GetUserId(HttpContext);
+            string role = SessionHelper.GetUserRole(HttpContext);
+
+            List<Quiz> quizzes;
+
+            if (role == "Student")
+            {
+                var enrolledIds = await _db.CourseEnrolments
+                    .Where(e => e.StudentId == userId)
+                    .Select(e => e.CourseId)
+                    .ToListAsync();
+
+                quizzes = await _db.Quizzes
+                    .Include(q => q.Course)
+                    .Include(q => q.Questions)
+                    .Where(q => enrolledIds.Contains(q.CourseId))
+                    .OrderBy(q => q.Course.Title)
+                    .ToListAsync();
+            }
+            else
+            {
+                // Educators/Admins see all quizzes on their courses.
+                var query = _db.Quizzes
+                    .Include(q => q.Course)
+                    .Include(q => q.Questions)
+                    .AsQueryable();
+                if (role == "Educator")
+                    query = query.Where(q => q.Course.EducatorId == userId);
+                quizzes = await query.OrderBy(q => q.Course.Title).ToListAsync();
+            }
+
+            // For students, load which quizzes they already attempted.
+            var attempted = await _db.QuizAttempts
+                .Where(a => a.StudentId == userId)
+                .Select(a => a.QuizId)
+                .ToListAsync();
+
+            ViewBag.AttemptedIds = attempted;
+            ViewBag.UserRole     = role;
+            return View(quizzes);
+        }
+
         // ── GET /Quiz/Create?courseId=5 ──────────────────────────────
         public IActionResult Create(int courseId)
         {

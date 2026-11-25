@@ -138,4 +138,57 @@
     </div>
   }
 
+  @* ── Quizzes ──────────────────────────────────────────────── *@
+  @if (Model.Quizzes.Any())
+  {
+    <div style="margin-top:2.5rem; border-top:var(--border-outer); padding-top:2rem;">
+      <h2 class="pf-card-title" style="margin-bottom:1.25rem;">Quizzes</h2>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1rem;">
+        @{
+          var attemptedQ = ViewBag.AttemptedQuizIds as List<int> ?? new List<int>();
+        }
+        @foreach (var quiz in Model.Quizzes)
+        {
+          bool done = attemptedQ.Contains(quiz.Id);
+          <div class="pf-card pf-card--outlined" style="padding:1.25rem 1.5rem;">
+            <span class="pf-label">
+              @quiz.Questions.Count question@(quiz.Questions.Count != 1 ? "s" : "")
+              &nbsp;·&nbsp; @quiz.TimeLimitMinutes min &nbsp;·&nbsp; Pass @quiz.PassMarkPercent%
+            </span>
+            <h3 class="pf-card-title" style="font-size:1.1rem; margin-top:0.3rem;">@quiz.Title</h3>
+
+            <div style="margin-top:0.75rem; display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+              @if (isOwner || userRole == "Admin")
+              {
+                <a asp-controller="Quiz" asp-action="EditQuestions" asp-route-id="@quiz.Id"
+                   class="pf-btn pf-btn--ghost pf-btn--sm">Edit Questions</a>
+              }
+              else if (isEnrolled)
+              {
+                if (done)
+                {
+                  <span class="pf-status pf-status--live">Completed</span>
+                  <a asp-controller="Quiz" asp-action="Result"
+                     asp-route-quizId="@quiz.Id"
+                     asp-route-studentId="@Context.Session.GetString("UserId")"
+                     class="pf-btn pf-btn--ghost pf-btn--sm">View Result</a>
+                }
+                else
+                {
+                  <a asp-controller="Quiz" asp-action="Take" asp-route-id="@quiz.Id"
+                     class="pf-btn pf-btn--sm">Start Quiz ▶</a>
+                }
+              }
+              else
+              {
+                <span class="pf-body-cell" style="opacity:0.5;">Enrol to take this quiz</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
 </div>
