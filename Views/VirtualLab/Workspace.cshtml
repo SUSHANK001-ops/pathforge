@@ -152,12 +152,26 @@
     var jsEl   = document.getElementById('lab-js');
     var frame  = document.getElementById('lab-frame');
 
+    if (!htmlEl || !frame) { return; }
+
+    // Build the "<script>" and "</script>" tags from fragments so the literal
+    // tags never appear in this page's source (which would break parsing).
+    var OPEN  = '<' + 'script>';
+    var CLOSE = '<' + '/script>';
+
     function buildDoc() {
+      var userJs = jsEl.value || '';
+      var jsBlock =
+        OPEN +
+        'try{' + userJs + '}catch(e){' +
+        'document.body.insertAdjacentHTML("beforeend",' +
+        '"<pre style=\\'color:#d8000f;font-family:monospace\\'>"+e+"</pre>");}' +
+        CLOSE;
+
       return '<!DOCTYPE html><html><head><meta charset="utf-8">' +
-             '<style>' + cssEl.value + '</style></head><body>' +
-             htmlEl.value +
-             '<script>try{' + jsEl.value + '}catch(e){document.body.insertAdjacentHTML(' +
-             '"beforeend","<pre style=\\'color:#d8000f\\'>"+e+"</pre>");}<\/script>' +
+             '<style>' + (cssEl.value || '') + '</style></head><body>' +
+             (htmlEl.value || '') +
+             jsBlock +
              '</body></html>';
     }
 
@@ -167,17 +181,25 @@
     }
 
     var timer;
-    function schedule() { clearTimeout(timer); timer = setTimeout(render, 350); }
-    [htmlEl, cssEl, jsEl].forEach(function (el) { el.addEventListener('input', schedule); });
-    document.getElementById('lab-run').addEventListener('click', render);
-
-    // Copy editor contents into the hidden fields right before submit.
-    document.getElementById('lab-save-form').addEventListener('submit', function () {
-      document.getElementById('save-html').value = htmlEl.value;
-      document.getElementById('save-css').value  = cssEl.value;
-      document.getElementById('save-js').value   = jsEl.value;
+    function schedule() { clearTimeout(timer); timer = setTimeout(render, 300); }
+    [htmlEl, cssEl, jsEl].forEach(function (el) {
+      if (el) { el.addEventListener('input', schedule); el.addEventListener('keyup', schedule); }
     });
 
+    var runBtn = document.getElementById('lab-run');
+    if (runBtn) { runBtn.addEventListener('click', render); }
+
+    // Copy editor contents into the hidden fields right before submit.
+    var saveForm = document.getElementById('lab-save-form');
+    if (saveForm) {
+      saveForm.addEventListener('submit', function () {
+        document.getElementById('save-html').value = htmlEl.value;
+        document.getElementById('save-css').value  = cssEl.value;
+        document.getElementById('save-js').value   = jsEl.value;
+      });
+    }
+
+    // Initial render once the page is ready.
     render();
   })();
 </script>
