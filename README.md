@@ -34,7 +34,7 @@ running across laptop restarts.
 |---|---|
 | Framework | ASP.NET Core **MVC** on **.NET 10.0** |
 | Data access | **Entity Framework Core 10** (Code-First, migrations) |
-| Database | **SQL Server Express** (instance `.\SQLEXPRESS01`) |
+| Database | **SQLite** (local file `PathForgeDB.db`, created automatically) |
 | Authentication | **Session-based** (no ASP.NET Identity); passwords hashed with **BCrypt.Net-Next** |
 | Styling | Custom CSS design system (FRAME.md), Tailwind-generated base, three Google Fonts |
 | Client scripting | Vanilla JavaScript (form validation, reading-progress strip, constellation canvas, live lab preview) |
@@ -321,7 +321,7 @@ PathForge/
 | Client-side & server-side scripting | `site.js` / controllers |
 | Multimedia | Course thumbnails, video materials, embedded links |
 | Creative feature | **Virtual Lab** (live coding sandbox) + **Constellation** star map |
-| Database connectivity | EF Core → SQL Server Express (`.\SQLEXPRESS01`) |
+| Database connectivity | EF Core → SQLite (`PathForgeDB.db`) |
 
 For running instructions and the database start/stop behaviour across
 restarts, see **[SETUP.md](SETUP.md)**.

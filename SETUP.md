@@ -1,8 +1,13 @@
 # PathForge — Setup & Run Guide
 
-How to install, run, and keep the database working — including **what to do
-after a laptop restart**. For the full feature/architecture reference, see
-[README.md](README.md).
+How to install and run the project. For the full feature/architecture
+reference, see [README.md](README.md).
+
+> **Database:** PathForge uses **SQLite** — a single local file
+> (`PathForgeDB.db`) created automatically on first run. There is **no
+> database server to install, start, or configure.** This also means it
+> works the same on any machine and survives laptop restarts with no extra
+> steps.
 
 ---
 
@@ -10,21 +15,15 @@ after a laptop restart**. For the full feature/architecture reference, see
 
 | Tool | Check | Notes |
 |---|---|---|
-| **.NET 10 SDK** | `dotnet --version` → `10.0.x` | Required to build and run. |
-| **SQL Server Express** | service `MSSQL$SQLEXPRESS01` exists | Instance name used by the app. |
-| **sqlcmd** (optional) | ships with the SQL Client SDK | Handy for inspecting the DB. |
+| **.NET 10 SDK** | `dotnet --version` → `10.0.x` | The only requirement to build and run. |
 
-The app connects to the SQL Server Express instance **`.\SQLEXPRESS01`**
-using Windows authentication. The connection string lives in
-`appsettings.json`:
+That's it. No SQL Server, no LocalDB, no services.
+
+The connection string in `appsettings.json` simply points at a file:
 
 ```json
-"DefaultConnection": "Server=.\\SQLEXPRESS01;Database=PathForgeDB;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True"
+"DefaultConnection": "Data Source=PathForgeDB.db"
 ```
-
-> **Different machine or instance name?** If your SQL Server instance is
-> named differently (e.g. `SQLEXPRESS`, or `(localdb)\MSSQLLocalDB`), change
-> the `Server=...` part of that line to match. Everything else stays the same.
 
 ---
 
@@ -33,14 +32,11 @@ using Windows authentication. The connection string lives in
 ```powershell
 cd D:\pathforge
 
-# 1. Make sure the database engine is running (see §4 if the service is stopped)
-#    The instance is MSSQL$SQLEXPRESS01.
-
-# 2. Build
+# 1. Build
 dotnet build
 
-# 3. Run — on first start the app will:
-#    - create the PathForgeDB database,
+# 2. Run — on first start the app will:
+#    - create the PathForgeDB.db SQLite file,
 #    - apply the EF Core migration (all tables),
 #    - seed demo data (12 users, 6 courses, labs, quizzes, etc.)
 dotnet run
@@ -51,13 +47,13 @@ Then open the URL printed in the console, typically:
 - **http://localhost:5280**
 - **https://localhost:7246**
 
-Log in with any account from the [test accounts table](README.md#10-seeded-demo-data--test-accounts),
+Log in with any account from the
+[test accounts table](README.md#10-seeded-demo-data--test-accounts),
 e.g. `wei@pathforge.test` / `Student@123`.
 
 > You do **not** need to run `dotnet ef database update` manually. The app
 > calls `db.Database.MigrateAsync()` on startup (`Program.cs` → `DataSeeder`),
-> so the schema is created/updated automatically. Running the EF command is
-> only needed if you want to apply migrations without launching the app.
+> so the schema is created automatically and the demo data is seeded.
 
 ---
 
@@ -69,12 +65,12 @@ dotnet run
    ▼
 Program.cs builds the web host
    │
-   ├─ registers SQL Server DbContext (connection string from appsettings.json)
+   ├─ registers SQLite DbContext (connection string from appsettings.json)
    ├─ registers session (HttpOnly cookie, 2-hour idle timeout)
    │
    ▼
 DataSeeder.SeedAsync(db)
-   ├─ db.Database.MigrateAsync()   → creates PathForgeDB + tables if missing
+   ├─ db.Database.MigrateAsync()   → creates PathForgeDB.db + tables if missing
    └─ if Users table is empty      → inserts all demo data (idempotent)
    │
    ▼
@@ -90,86 +86,48 @@ are written to the session; protected controller actions check the role via
 
 ---
 
-## 4. Database start/stop — and what happens on laptop restart
+## 4. The database & laptop restarts
 
-### Does the database start automatically?
+The entire database is the **`PathForgeDB.db`** file in the project folder
+(SQLite may also create `PathForgeDB.db-wal` and `PathForgeDB.db-shm` helper
+files — this is normal).
 
-The SQL Server Express service (`MSSQL$SQLEXPRESS01`) is normally set to
-**Automatic** start, so it **should start on its own when Windows boots**.
-In that case, after a restart you just run `dotnet run` and everything works.
+- **Nothing to start.** Because SQLite is a file, there is no service to
+  launch after a reboot. Just run `dotnet run` and it works.
+- **Your data persists.** All accounts, courses, progress and certificates
+  stay in `PathForgeDB.db` across restarts.
+- **The seeder is idempotent** — it only inserts demo data when the `Users`
+  table is empty, so it never duplicates data on later runs.
 
-### If the database does NOT start after a restart
-
-Sometimes the service is set to *Manual*, or Windows hasn't started it yet.
-Symptom: `dotnet run` fails with a connection error like
-*"A network-related or instance-specific error… the server was not found"*.
-
-**Fix — start the service (one-time per boot).** Open **PowerShell as
-Administrator** and run:
-
-```powershell
-net start 'MSSQL$SQLEXPRESS01'
-```
-
-or:
-
-```powershell
-Start-Service 'MSSQL$SQLEXPRESS01'
-```
-
-Check it is running:
-
-```powershell
-Get-Service 'MSSQL$SQLEXPRESS01' | Select-Object Name, Status
-```
-
-### Make it start automatically on every boot (recommended, do once)
-
-In an **Administrator** PowerShell:
-
-```powershell
-Set-Service 'MSSQL$SQLEXPRESS01' -StartupType Automatic
-```
-
-After this, the database comes up by itself on every restart and you never
-have to start it manually again.
-
-### Stopping the database (if you ever need to)
-
-```powershell
-# Administrator PowerShell
-net stop 'MSSQL$SQLEXPRESS01'
-```
-
-### Your data survives restarts
-
-The database lives inside the SQL Server instance (not in the project folder),
-so **all accounts, courses, progress and certificates persist across
-restarts**. Restarting the laptop does not wipe anything. The seeder only
-inserts demo data when the `Users` table is empty, so it will not duplicate
-data on later runs.
+> These `.db*` files are git-ignored (see `.gitignore`), so your local data
+> is never committed to the repository.
 
 ---
 
 ## 5. Common tasks
 
 ### Reset the database to fresh demo data
-Drop the database, then run the app again (it recreates and reseeds).
-In an Administrator PowerShell with the service running:
+Stop the app, delete the database file, and run again:
 
 ```powershell
-$sqlcmd = "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE"
-& $sqlcmd -S ".\SQLEXPRESS01" -E -C -Q "ALTER DATABASE PathForgeDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE PathForgeDB;"
-cd D:\pathforge; dotnet run
+cd D:\pathforge
+# Stop any running instance first
+Get-Process dotnet | Stop-Process -Force -ErrorAction SilentlyContinue
+# Delete the database (and its WAL/SHM sidecars)
+Remove-Item PathForgeDB.db* -Force
+# Run — recreates and reseeds automatically
+dotnet run
 ```
 
-### Inspect the data quickly
+### Inspect the data (optional)
+Use any SQLite viewer, e.g. **DB Browser for SQLite** (free), and open
+`PathForgeDB.db`. Or with the `sqlite3` CLI:
+
 ```powershell
-& "C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\SQLCMD.EXE" `
-  -S ".\SQLEXPRESS01" -d PathForgeDB -E -C -Q "SELECT COUNT(*) AS Users FROM Users;"
+sqlite3 PathForgeDB.db "SELECT COUNT(*) FROM Users;"
 ```
 
-### Apply a new migration manually (optional)
+### Apply a new migration (only if you change the entity classes)
 ```powershell
 dotnet ef migrations add <Name>
 dotnet ef database update
@@ -181,34 +139,29 @@ dotnet ef database update
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| *"server was not found / not accessible"* on `dotnet run` | SQL service not running | `net start 'MSSQL$SQLEXPRESS01'` in an admin shell (§4) |
-| *"Login failed for user ..."* | Your Windows account isn't a login on the instance | Add it as sysadmin (see below) |
-| *"Introducing FOREIGN KEY constraint ... may cause cycles or multiple cascade paths"* | A new FK to `Users` without `Restrict` | Already handled for all current entities; if you add one, set `.OnDelete(DeleteBehavior.Restrict)` in `PathForgeDbContext` |
-| Port already in use | A previous `dotnet run` still running | Stop it: `Get-Process dotnet \| Stop-Process -Force` |
-| Service won't start, log shows *"misaligned log IOs on master.mdf → Hit Fatal Error"* | Corrupt system databases on that SQL instance | Use a different/freshly-created SQL instance (this project uses `SQLEXPRESS01` for exactly that reason) |
-
-### Granting your Windows account access (if "Login failed")
-In an **Administrator** PowerShell, run each line separately:
-
-```powershell
-net stop 'MSSQL$SQLEXPRESS01'
-net start 'MSSQL$SQLEXPRESS01' /m
-sqlcmd -S ".\SQLEXPRESS01" -E -C -Q "CREATE LOGIN [YOURPC\YourUser] FROM WINDOWS; ALTER SERVER ROLE sysadmin ADD MEMBER [YOURPC\YourUser];"
-net stop 'MSSQL$SQLEXPRESS01'
-net start 'MSSQL$SQLEXPRESS01'
-```
-
-Replace `YOURPC\YourUser` with your Windows account (run `whoami` to see it).
-`/m` starts SQL in single-user mode so a local admin can add the login.
+| Port already in use | A previous `dotnet run` is still running | `Get-Process dotnet \| Stop-Process -Force` |
+| Build error: *"file is locked by PathForge"* | App still running while building | Stop it first (command above), then `dotnet build` |
+| Pages render with a plain font for a split second | Fonts load locally with `font-display: swap` | Normal; no action needed |
+| Want a totally clean slate | — | Delete `PathForgeDB.db*` and run again (§5) |
 
 ---
 
 ## 7. Quick reference
 
 ```powershell
-# Start DB (admin shell)        net start 'MSSQL$SQLEXPRESS01'
-# Make DB auto-start (admin)    Set-Service 'MSSQL$SQLEXPRESS01' -StartupType Automatic
-# Build                         dotnet build
-# Run                           dotnet run      →  http://localhost:5280
-# Stop a stuck run              Get-Process dotnet | Stop-Process -Force
+# Build                 dotnet build
+# Run                   dotnet run          →  http://localhost:5280
+# Reset DB              Remove-Item PathForgeDB.db* -Force ; dotnet run
+# Stop a stuck run      Get-Process dotnet | Stop-Process -Force
 ```
+
+---
+
+## Note on the database choice
+
+Earlier versions of this project targeted SQL Server Express. It now uses
+**SQLite** for simplicity and speed: no server to install or keep running,
+instant startup, identical EF Core code (LINQ, migrations, relationships),
+and a single portable file. All database requirements in the assignment brief
+(INSERT / SELECT / UPDATE / DELETE, relationships, connectivity via EF Core)
+are fully satisfied by SQLite.
